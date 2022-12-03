@@ -50,7 +50,6 @@ public class Main extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if(manager.processCommandInteraction(event)) return;
-
         System.out.println("unknown command");
     }
 }

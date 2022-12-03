@@ -16,14 +16,16 @@ public class CommandExecutor {
     private final RegisteredCommand source;
     private final String description;
     private final int contextArgumentIndex;
+    private final boolean sync;
 
-    public CommandExecutor(RegisteredCommand source, String name, String description, Method callingMethod, CommandParameters parameters, int contextArgumentIndex) {
+    public CommandExecutor(RegisteredCommand source, String name, String description, Method callingMethod, CommandParameters parameters, int contextArgumentIndex, boolean sync) {
         this.name = name;
         this.description = description;
         this.callingMethod = callingMethod;
         this.parameters = parameters;
 
         this.source = source;
+        this.sync = sync;
         this.contextArgumentIndex = contextArgumentIndex;
     }
 
@@ -40,6 +42,16 @@ public class CommandExecutor {
     }
 
     public void execute(SlashCommandInteractionEvent event) {
+        if(!sync) {
+            execute0(event);
+            return;
+        }
+        Thread executor = new Thread(() -> execute0(event));
+        executor.setDaemon(true);
+        executor.start();
+    }
+
+    private void execute0(SlashCommandInteractionEvent event) {
         try {
             callingMethod.invoke(source.getCommandBlueprint(), injectInvokeArgs(event, event.getOptions()));
         } catch (IllegalAccessException | InvocationTargetException e) {

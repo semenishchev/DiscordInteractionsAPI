@@ -41,7 +41,13 @@ class CommandManagerImpl implements CommandManager {
         if(command == null) {
             throw new RuntimeException("Failed resolving command");
         }
-        CommandData jdaCommand = JdaCommandWrapper.wrap(command);
+        CommandData jdaCommand;
+        try {
+            jdaCommand = JdaCommandWrapper.wrap(command);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("\nError while registering command " + command.getCommandBlueprint().getClass().getName() + ": " + e.getMessage());
+        }
+
         if(command.isGlobal()) {
             jda.upsertCommand(jdaCommand).queue();
         } else {

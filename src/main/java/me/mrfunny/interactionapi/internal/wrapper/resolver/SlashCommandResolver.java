@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.internal.wrapper.resolver;
 
+import me.mrfunny.interactionapi.annotation.Sync;
 import me.mrfunny.interactionapi.data.CommandExecutor;
 import me.mrfunny.interactionapi.internal.Command;
 import me.mrfunny.interactionapi.annotation.Subcommand;
@@ -76,7 +77,7 @@ public class SlashCommandResolver {
         if(description == null || name.equals("")) {
             description = "No description provided.";
         }
-        return new CommandExecutor(this.command, name, description, method, parameters, contextArgumentIndex);
+        return new CommandExecutor(this.command, name, description, method, parameters, contextArgumentIndex, method.isAnnotationPresent(Sync.class));
     }
 
     private static CommandParameter resolveParameter(java.lang.reflect.Parameter param, int index) {

@@ -20,19 +20,19 @@ public class ExampleCommand implements SlashCommand {
             @Parameter(name = "welcome_test", required = true) String welcomeText,
             @Parameter(name = "to_send") User toSend
     ) throws InterruptedException {
-        invocation.deferSync(true);
+        invocation.defer(true);
         Thread.sleep(4000);
         User user = toSend == null ? invocation.getUser() : toSend;
-        MessageContent response = new MessageContent()
-                .setContent("this is it")
-                .addEmbed(
-                        new EmbedBuilder()
-                            .setAuthor(user.getName() + "#" + user.getDiscriminator())
-                            .addField("Welcome", welcomeText, true)
-                );
+        MessageContent response = new MessageContent(
+                "this is it",
+                new EmbedBuilder()
+                        .setAuthor(user.getName() + "#" + user.getDiscriminator())
+                        .addField("Welcome", welcomeText, true)
+                        .build()
+        );
 
-        invocation.sendSync(response);
+        invocation.send(response);
         Thread.sleep(4000);
-        invocation.editSync(response.addEmbed(new EmbedBuilder().setTitle("This is an edited message")));
+        invocation.edit(response.addEmbed(new EmbedBuilder().setTitle("This is an edited message")));
     }
 }

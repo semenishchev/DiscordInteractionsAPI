@@ -32,19 +32,19 @@ public class SlashCommandInvocation {
         this.interaction = replyCallback;
     }
 
-    public void defer() {
-        this.defer(false, null);
+    public void deferAsync() {
+        this.deferAsync(false, null);
     }
 
-    public void defer(boolean ephemeral) {
-        this.defer(ephemeral, null);
+    public void deferAsync(boolean ephemeral) {
+        this.deferAsync(ephemeral, null);
     }
 
-    public void defer(Consumer<SlashCommandInvocation> onComplete) {
-        this.defer(false, onComplete);
+    public void deferAsync(Consumer<SlashCommandInvocation> onComplete) {
+        this.deferAsync(false, onComplete);
     }
 
-    public void defer(boolean ephemeral, Consumer<SlashCommandInvocation> onComplete) {
+    public void deferAsync(boolean ephemeral, Consumer<SlashCommandInvocation> onComplete) {
         if(deferred) return;
         this.createDefer(ephemeral).queue(hook -> {
             this.deferred = true;
@@ -56,22 +56,7 @@ public class SlashCommandInvocation {
         });
     }
 
-    public SlashCommandInvocation deferSync() {
-        return this.deferSync(false);
-    }
-
-    public SlashCommandInvocation deferSync(boolean ephemeral) {
-        if(deferred) return this;
-        this.interactionHook = createDefer(ephemeral).complete();
-        this.deferred = true;
-        return this;
-    }
-
-    public ReplyCallbackAction createDefer(boolean ephemeral) {
-        return this.interaction.deferReply(ephemeral);
-    }
-
-    public void send(InteractionResponse response, boolean ephemeral, Consumer<SlashCommandInvocation> messageConsumer) {
+    public void sendAsync(InteractionResponse response, boolean ephemeral, Consumer<SlashCommandInvocation> messageConsumer) {
         if(response instanceof MessageContent messageContent) {
             if(replied) {
                 createEdit(messageContent).queue();
@@ -82,6 +67,7 @@ public class SlashCommandInvocation {
                     this.replied = true;
                     this.possibleMessage = message;
                 });
+                return;
             }
             createSend(messageContent, ephemeral).queue(hook -> {
                 setInteractionHook(hook);
@@ -94,15 +80,34 @@ public class SlashCommandInvocation {
         }
     }
 
-    public void send(InteractionResponse response, boolean ephemeral) {
-        this.send(response, ephemeral, null);
+    public void sendAsync(InteractionResponse response, boolean ephemeral) {
+        this.sendAsync(response, ephemeral, null);
     }
 
-    public void send(InteractionResponse response) {
-        this.send(response, false, null);
+    public void sendAsync(InteractionResponse response, Consumer<SlashCommandInvocation> consumer) {
+        this.sendAsync(response, false, consumer);
     }
 
-    public SlashCommandInvocation sendSync(InteractionResponse response, boolean ephemeral) {
+    public void sendAsync(InteractionResponse response) {
+        this.sendAsync(response, false, null);
+    }
+
+    public void editAsync(MessageContent messageContent, Consumer<Message> consumer) {
+        createEdit(messageContent).queue(consumer);
+    }
+
+    public SlashCommandInvocation defer() {
+        return this.defer(false);
+    }
+
+    public SlashCommandInvocation defer(boolean ephemeral) {
+        if(deferred) return this;
+        this.interactionHook = createDefer(ephemeral).complete();
+        this.deferred = true;
+        return this;
+    }
+
+    public SlashCommandInvocation send(InteractionResponse response, boolean ephemeral) {
         if(response instanceof MessageContent messageContent) {
             if(replied) {
                 Logger.getGlobal().warning("The interaction is already sent, doing nothing.");
@@ -122,34 +127,14 @@ public class SlashCommandInvocation {
         return this;
     }
 
-    public SlashCommandInvocation sendSync(InteractionResponse response) {
-        return this.sendSync(response, false);
+    public SlashCommandInvocation send(InteractionResponse response) {
+        return this.send(response, false);
     }
 
-    public void edit(MessageContent messageContent, Consumer<Message> consumer) {
-        createEdit(messageContent).queue(consumer);
-    }
-
-    public Message editSync(MessageContent newContent) {
+    public Message edit(MessageContent newContent) {
         return createEdit(newContent).complete();
     }
 
-    public void setInteractionHook(InteractionHook interactionHook) {
-        this.replied = true;
-        this.interactionHook = interactionHook;
-    }
-
-    public InteractionHook getInteractionHook() {
-        return interactionHook;
-    }
-
-    public Message getPossibleMessage() {
-        return possibleMessage;
-    }
-
-    public IReplyCallback getInteraction() {
-        return interaction;
-    }
 
     @NotNull
     private ReplyCallbackAction createSend(MessageContent content, boolean ephemeral) {
@@ -163,6 +148,10 @@ public class SlashCommandInvocation {
             throw new RuntimeException("The interaction can't be edited while not being replied");
         }
         return ResponseMapper.mapEdit(newContent, this.interactionHook, this.possibleMessage.getId());
+    }
+
+    public ReplyCallbackAction createDefer(boolean ephemeral) {
+        return this.interaction.deferReply(ephemeral);
     }
 
     public User getUser() {
@@ -191,5 +180,22 @@ public class SlashCommandInvocation {
 
     public Guild getGuild() {
         return this.interaction.getGuild();
+    }
+
+    public void setInteractionHook(InteractionHook interactionHook) {
+        this.replied = true;
+        this.interactionHook = interactionHook;
+    }
+
+    public InteractionHook getInteractionHook() {
+        return interactionHook;
+    }
+
+    public Message getPossibleMessage() {
+        return possibleMessage;
+    }
+
+    public IReplyCallback getInteraction() {
+        return interaction;
     }
 }
