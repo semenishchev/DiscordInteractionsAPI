@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'me.mrfunny.interactionapi'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+    implementation("net.dv8tion:JDA:5.0.0-beta.1") {
+        exclude module: 'opus-java'
+    }
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
