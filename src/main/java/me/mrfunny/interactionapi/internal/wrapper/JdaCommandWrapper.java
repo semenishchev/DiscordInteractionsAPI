@@ -1,11 +1,11 @@
 package me.mrfunny.interactionapi.internal.wrapper;
 
 import me.mrfunny.interactionapi.internal.wrapper.util.ParameterMapper;
-import me.mrfunny.interactionapi.commands.SlashCommand;
-import me.mrfunny.interactionapi.data.CommandExecutor;
-import me.mrfunny.interactionapi.data.CommandParameter;
-import me.mrfunny.interactionapi.data.CommandParameters;
-import me.mrfunny.interactionapi.data.RegisteredCommand;
+import me.mrfunny.interactionapi.commands.slash.SlashCommand;
+import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
+import me.mrfunny.interactionapi.internal.data.command.CommandParameter;
+import me.mrfunny.interactionapi.internal.data.command.CommandParameters;
+import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.ArrayList;

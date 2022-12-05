@@ -3,12 +3,13 @@ package me.mrfunny.interactionapi.internal.wrapper.resolver;
 import me.mrfunny.interactionapi.commands.context.ContextCommand;
 import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
 import me.mrfunny.interactionapi.commands.context.UserContextCommand;
+import me.mrfunny.interactionapi.internal.wrapper.resolver.interfaces.Resolver;
 
 import java.util.HashMap;
 
-public class ContextCommandResolver {
+public class ContextCommandResolver implements Resolver {
     public ContextCommandResolver(
-            ContextCommand command,
+            ContextCommand<?> command,
             HashMap<String, UserContextCommand> contextUserCommands,
             HashMap<String, MessageContextCommand> contextMessageCommands
     ) {

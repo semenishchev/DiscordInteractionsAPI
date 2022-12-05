@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.response;
 
+import me.mrfunny.interactionapi.response.interfaces.InteractionResponse;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.*;

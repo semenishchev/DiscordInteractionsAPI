@@ -3,6 +3,7 @@ package me.mrfunny.example;
 import me.mrfunny.interactionapi.CommandManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -51,5 +52,10 @@ public class Main extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if(manager.processCommandInteraction(event)) return;
         System.out.println("unknown command");
+    }
+
+    @Override
+    public void onModalInteraction(ModalInteractionEvent event) {
+        if(event.getMember())
     }
 }

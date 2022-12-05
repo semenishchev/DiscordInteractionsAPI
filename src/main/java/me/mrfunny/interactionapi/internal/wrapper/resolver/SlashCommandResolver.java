@@ -1,19 +1,20 @@
 package me.mrfunny.interactionapi.internal.wrapper.resolver;
 
 import me.mrfunny.interactionapi.annotation.Sync;
-import me.mrfunny.interactionapi.data.CommandExecutor;
+import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
 import me.mrfunny.interactionapi.internal.Command;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.annotation.Main;
 import me.mrfunny.interactionapi.annotation.Parameter;
-import me.mrfunny.interactionapi.data.CommandParameter;
-import me.mrfunny.interactionapi.data.CommandParameters;
-import me.mrfunny.interactionapi.data.RegisteredCommand;
-import me.mrfunny.interactionapi.commands.SlashCommandInvocation;
+import me.mrfunny.interactionapi.internal.data.command.CommandParameter;
+import me.mrfunny.interactionapi.internal.data.command.CommandParameters;
+import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
+import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
+import me.mrfunny.interactionapi.internal.wrapper.resolver.interfaces.ComplexResolver;
 
 import java.lang.reflect.Method;
 
-public class SlashCommandResolver {
+public class SlashCommandResolver implements ComplexResolver<RegisteredCommand> {
     private final Class<?> commandClass;
     private RegisteredCommand command = null;
     private final Command source;
@@ -23,6 +24,7 @@ public class SlashCommandResolver {
         this.source = commandInstance;
     }
 
+    @Override
     public void resolve() {
         this.command = new RegisteredCommand(source, source.name(), source.isGlobal());
         resolveExecutables();
@@ -98,6 +100,7 @@ public class SlashCommandResolver {
         return new CommandParameter(name, description, required, param, index);
     }
 
+    @Override
     public RegisteredCommand result() {
         return this.command;
     }

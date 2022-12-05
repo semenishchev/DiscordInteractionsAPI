@@ -1,4 +1,6 @@
 package me.mrfunny.interactionapi.response;
 
-public class Dialogue implements InteractionResponse {
+import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
+
+public class Dialogue implements CachedResponse {
 }

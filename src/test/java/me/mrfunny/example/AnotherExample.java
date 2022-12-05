@@ -3,8 +3,8 @@ package me.mrfunny.example;
 import me.mrfunny.interactionapi.annotation.Parameter;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.annotation.Sync;
-import me.mrfunny.interactionapi.commands.SlashCommand;
-import me.mrfunny.interactionapi.commands.SlashCommandInvocation;
+import me.mrfunny.interactionapi.commands.slash.SlashCommand;
+import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
 import me.mrfunny.interactionapi.response.MessageContent;
 import net.dv8tion.jda.api.EmbedBuilder;
 

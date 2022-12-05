@@ -1,4 +1,4 @@
-package me.mrfunny.interactionapi.commands;
+package me.mrfunny.interactionapi.commands.slash;
 
 import me.mrfunny.interactionapi.internal.Command;
 

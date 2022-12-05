@@ -1,6 +1,7 @@
-package me.mrfunny.interactionapi.data;
+package me.mrfunny.interactionapi.internal.data.command;
 
-import me.mrfunny.interactionapi.commands.SlashCommandInvocation;
+import me.mrfunny.interactionapi.CommandManager;
+import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
 import me.mrfunny.interactionapi.internal.wrapper.util.ParameterMapper;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -46,9 +47,7 @@ public class CommandExecutor {
             execute0(event);
             return;
         }
-        Thread executor = new Thread(() -> execute0(event));
-        executor.setDaemon(true);
-        executor.start();
+        CommandManager.getAsyncExecutor().execute(() -> execute0(event));
     }
 
     private void execute0(SlashCommandInteractionEvent event) {

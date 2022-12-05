@@ -1,4 +1,4 @@
-package me.mrfunny.interactionapi.data;
+package me.mrfunny.interactionapi.internal.data.command;
 
 import me.mrfunny.interactionapi.internal.Command;
 
