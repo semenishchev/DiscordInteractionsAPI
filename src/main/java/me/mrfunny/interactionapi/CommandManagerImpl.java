@@ -6,12 +6,12 @@ import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
 import me.mrfunny.interactionapi.commands.context.UserContextCommand;
 import me.mrfunny.interactionapi.internal.Command;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
-import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
-import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
-import me.mrfunny.interactionapi.internal.wrapper.resolver.SlashCommandResolver;
 import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
 import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
 import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
+import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
+import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
+import me.mrfunny.interactionapi.internal.wrapper.resolver.SlashCommandResolver;
 import me.mrfunny.interactionapi.modals.ModalInvocation;
 import me.mrfunny.interactionapi.response.ModalResponse;
 import net.dv8tion.jda.api.JDA;
@@ -23,8 +23,6 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.HashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 class CommandManagerImpl implements CommandManager {
     private final JDA jda;

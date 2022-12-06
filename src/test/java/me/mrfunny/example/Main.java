@@ -56,6 +56,5 @@ public class Main extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
-        if(event.getMember())
     }
 }

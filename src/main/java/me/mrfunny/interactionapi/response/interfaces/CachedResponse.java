@@ -4,10 +4,19 @@ import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import net.dv8tion.jda.api.entities.User;
 
 public interface CachedResponse extends InteractionResponse {
-    default void init() {
+    default void addToCache() {
         ResponseCache.handle(this);
     }
 
     default int deleteAfter() {return -1;}
+
+    /**
+     * Represents if the response to the interaction is permanent and needs to be always loaded
+     * @return True - interaction won't be cached, and you need to reference either a field of the response type, False will cache the interaction as default
+     */
+    default boolean permanent() {
+        return false;
+    }
+
     User getCreatedFor();
 }

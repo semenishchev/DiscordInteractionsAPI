@@ -31,15 +31,14 @@ public class ModalResponse implements CachedResponse, Modal {
         this.title = title;
         this.createdFor = createdFor;
         this.deleteAfter = deleteAfter;
-        this.init();
+
+        if(!permanent() || deleteAfter != -1) {
+            this.addToCache();
+        }
     }
 
     public ModalResponse(User createdFor, String id, String title) {
         this(createdFor, id, title, ResponseCache.DEFAULT_DELETE_AFTER);
-    }
-
-    public ModalResponse(User createdFor, String id, String title, boolean permanent) {
-        this(createdFor, id, title, permanent ? -1 : ResponseCache.DEFAULT_DELETE_AFTER);
     }
 
     public HashMap<String, Field> getFields() {
