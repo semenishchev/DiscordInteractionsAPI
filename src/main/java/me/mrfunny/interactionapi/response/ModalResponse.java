@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.response;
 
+import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.modals.ModalInvocation;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.entities.Member;
@@ -22,11 +23,23 @@ public class ModalResponse implements CachedResponse, Modal {
     private String title;
     private final List<ActionRow> components = new ArrayList<>();
     private final HashMap<String, Field> fields = new HashMap<>();
+    private final User createdFor;
+    private final int deleteAfter;
 
-    public ModalResponse(String id, String title) {
+    public ModalResponse(User createdFor, String id, String title, int deleteAfter) {
         this.id = id;
         this.title = title;
+        this.createdFor = createdFor;
+        this.deleteAfter = deleteAfter;
         this.init();
+    }
+
+    public ModalResponse(User createdFor, String id, String title) {
+        this(createdFor, id, title, ResponseCache.DEFAULT_DELETE_AFTER);
+    }
+
+    public ModalResponse(User createdFor, String id, String title, boolean permanent) {
+        this(createdFor, id, title, permanent ? -1 : ResponseCache.DEFAULT_DELETE_AFTER);
     }
 
     public HashMap<String, Field> getFields() {
@@ -85,4 +98,13 @@ public class ModalResponse implements CachedResponse, Modal {
                 .toString();
     }
 
+    @Override
+    public User getCreatedFor() {
+        return this.createdFor;
+    }
+
+    @Override
+    public int deleteAfter() {
+        return this.deleteAfter;
+    }
 }

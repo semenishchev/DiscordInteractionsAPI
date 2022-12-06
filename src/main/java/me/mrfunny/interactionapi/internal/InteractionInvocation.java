@@ -49,7 +49,6 @@ public abstract class InteractionInvocation {
         this.deferAsync(false, onComplete);
     }
 
-    
     public void deferAsync(boolean ephemeral, Consumer<InteractionInvocation> onComplete) {
         if(deferred) return;
         this.createDefer(ephemeral).queue(hook -> {
@@ -60,7 +59,6 @@ public abstract class InteractionInvocation {
             }
         });
     }
-
     
     public void sendAsync(InteractionResponse response, boolean ephemeral, Consumer<InteractionInvocation> messageConsumer) {
         if(replied) {
@@ -92,33 +90,27 @@ public abstract class InteractionInvocation {
             commandInteraction.replyModal(modalResponse).queue(s -> ConsumerUtil.accept(messageConsumer, this));
         }
     }
-
     
     public void sendAsync(InteractionResponse response, boolean ephemeral) {
         this.sendAsync(response, ephemeral, null);
     }
 
-    
     public void sendAsync(InteractionResponse response, Consumer<InteractionInvocation> consumer) {
         this.sendAsync(response, false, consumer);
     }
-
     
     public void sendAsync(InteractionResponse response) {
         this.sendAsync(response, false, null);
     }
-
     
     public void editAsync(MessageContent messageContent, Consumer<Message> consumer) {
         createEdit(messageContent).queue(consumer);
     }
-
     
     public InteractionInvocation defer() {
         return this.defer(false);
     }
 
-    
     public InteractionInvocation defer(boolean ephemeral) {
         if(deferred) return this;
         this.interactionHook = createDefer(ephemeral).complete();
@@ -126,7 +118,6 @@ public abstract class InteractionInvocation {
         return this;
     }
 
-    
     public InteractionInvocation send(InteractionResponse response, boolean ephemeral) {
         if(replied) {
             Logger.getGlobal().warning("The interaction is already sent, doing nothing.");
@@ -203,7 +194,6 @@ public abstract class InteractionInvocation {
         return this.interaction.deferReply(ephemeral);
     }
 
-    
     public User getUser() {
         return this.interaction.getUser();
     }
@@ -217,7 +207,6 @@ public abstract class InteractionInvocation {
         return this.interaction.getTimeCreated();
     }
 
-    
     public ChannelType getChannelType() {
         return this.interaction.getChannelType();
     }

@@ -101,7 +101,7 @@ class CommandManagerImpl implements CommandManager {
 
     @Override
     public boolean processModalInteraction(ModalInteractionEvent event) {
-        ModalResponse cached = (ModalResponse) ResponseCache.getCached(event.getModalId());
+        ModalResponse cached = ResponseCache.getCached(event, ModalResponse.class);
         if(cached == null) {
             event.reply("Interaction expired").setEphemeral(true).queue();
             return true;
