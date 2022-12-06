@@ -1,12 +1,10 @@
 package me.mrfunny.interactionapi.response;
 
+import me.mrfunny.interactionapi.common.SimpleExecutable;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
-import me.mrfunny.interactionapi.modals.ModalInvocation;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.data.DataArray;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.utils.EntityString;
@@ -18,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ModalResponse implements CachedResponse, Modal {
+public class Modal implements CachedResponse, SimpleExecutable, net.dv8tion.jda.api.interactions.modals.Modal {
     private String id;
     private String title;
     private final List<ActionRow> components = new ArrayList<>();
@@ -26,19 +24,20 @@ public class ModalResponse implements CachedResponse, Modal {
     private final User createdFor;
     private final int deleteAfter;
 
-    public ModalResponse(User createdFor, String id, String title, int deleteAfter) {
-        this.id = id;
-        this.title = title;
+    public Modal(User createdFor, int deleteAfter) {
         this.createdFor = createdFor;
         this.deleteAfter = deleteAfter;
-
-        if(!permanent() || deleteAfter != -1) {
-            this.addToCache();
-        }
+        this.init();
     }
 
-    public ModalResponse(User createdFor, String id, String title) {
-        this(createdFor, id, title, ResponseCache.DEFAULT_DELETE_AFTER);
+    public Modal(String id, String title) {
+        this(null);
+        this.id = id;
+        this.title = title;
+    }
+
+    public Modal(User createdFor) {
+        this(createdFor, ResponseCache.DEFAULT_DELETE_AFTER);
     }
 
     public HashMap<String, Field> getFields() {
@@ -46,16 +45,15 @@ public class ModalResponse implements CachedResponse, Modal {
     }
 
     public void onInit(){}
-    public void onExecute(ModalInvocation invocation, User executor) {}
 
-    public void onExecute(ModalInvocation invocation, Member executor) {}
-
-    public void setTitle(String title) {
+    public Modal setTitle(String title) {
         this.title = title;
+        return this;
     }
 
-    public void setId(String id) {
+    public Modal setId(String id) {
         this.id = id;
+        return this;
     }
 
     @NotNull
@@ -80,10 +78,10 @@ public class ModalResponse implements CachedResponse, Modal {
     @Override
     public DataObject toData() {
         DataObject object = DataObject.empty()
-                .put("custom_id", id)
-                .put("title", title);
+                .put("custom_id", getId())
+                .put("title", getTitle());
 
-        object.put("components", DataArray.fromCollection(components.stream()
+        object.put("components", DataArray.fromCollection(getActionRows().stream()
                 .map(ActionRow::toData)
                 .collect(Collectors.toList())));
         return object;
@@ -92,8 +90,8 @@ public class ModalResponse implements CachedResponse, Modal {
     @Override
     public String toString() {
         return new EntityString(this)
-                .addMetadata("id", id)
-                .addMetadata("title", title)
+                .addMetadata("id", getId())
+                .addMetadata("title", getTitle())
                 .toString();
     }
 

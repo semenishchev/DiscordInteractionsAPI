@@ -1,6 +1,7 @@
 package me.mrfunny.example;
 
 import me.mrfunny.interactionapi.CommandManager;
+import me.mrfunny.interactionapi.response.Modal;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;

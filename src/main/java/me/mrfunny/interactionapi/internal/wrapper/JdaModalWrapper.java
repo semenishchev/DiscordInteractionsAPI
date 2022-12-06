@@ -3,10 +3,9 @@ package me.mrfunny.interactionapi.internal.wrapper;
 import me.mrfunny.interactionapi.annotation.ModalFieldData;
 import me.mrfunny.interactionapi.modals.ModalField;
 import me.mrfunny.interactionapi.modals.ModalFieldImpl;
-import me.mrfunny.interactionapi.response.ModalResponse;
+import me.mrfunny.interactionapi.response.Modal;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 
 import java.lang.reflect.Field;
@@ -16,10 +15,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JdaModalWrapper {
-    public static Modal buildModalToRun(ModalResponse modalResponse) throws Exception {
-        Modal.Builder modalBuilder = Modal.create(modalResponse.getId(), modalResponse.getTitle());
+    public static net.dv8tion.jda.api.interactions.modals.Modal buildModalToRun(Modal modal) throws Exception {
+        net.dv8tion.jda.api.interactions.modals.Modal.Builder modalBuilder = net.dv8tion.jda.api.interactions.modals.Modal.create(modal.getId(), modal.getTitle());
         ArrayList<Field> fields = new ArrayList<>();
-        for(Field field : modalResponse.getClass().getDeclaredFields()) {
+        for(Field field : modal.getClass().getDeclaredFields()) {
             if(field.getDeclaringClass().getName().equals(ModalField.class.getName())) {
                 ModalFieldData modalFieldData = field.getAnnotation(ModalFieldData.class);
                 if(modalFieldData == null) continue;
@@ -39,13 +38,13 @@ public class JdaModalWrapper {
                         .setMaxLength(modalFieldData.maxLength())
                         .setRequired(modalFieldData.required());
 
-                field.set(modalResponse, modalField);
+                field.set(modal, modalField);
                 fields.add(field);
             }
         }
-        modalResponse.onInit();
+        modal.onInit();
         for(Field javaField : fields) {
-            ModalFieldImpl field = (ModalFieldImpl) javaField.get(modalResponse);
+            ModalFieldImpl field = (ModalFieldImpl) javaField.get(modal);
             modalBuilder.addActionRow(TextInput.create(field.getId(), field.getLabel(), field.getInputStyle())
                     .setPlaceholder(field.getPlaceholder())
                     .setMinLength(field.getMinLength())
@@ -56,7 +55,7 @@ public class JdaModalWrapper {
         return modalBuilder.build();
     }
 
-    public static void mapAfterRun(ModalInteractionEvent modalInteractionEvent, ModalResponse response) throws IllegalAccessException {
+    public static void mapAfterRun(ModalInteractionEvent modalInteractionEvent, Modal response) throws IllegalAccessException {
         Map<String, ModalMapping> map = modalInteractionEvent.getValues().stream().collect(Collectors.toMap(ModalMapping::getId, m -> m));
         for(Map.Entry<String, Field> classField : response.getFields().entrySet()) {
             Field field = classField.getValue();

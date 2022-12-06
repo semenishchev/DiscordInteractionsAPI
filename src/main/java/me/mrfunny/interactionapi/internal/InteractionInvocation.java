@@ -2,7 +2,7 @@ package me.mrfunny.interactionapi.internal;
 
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
-import me.mrfunny.interactionapi.response.ModalResponse;
+import me.mrfunny.interactionapi.response.Modal;
 import me.mrfunny.interactionapi.response.interfaces.InteractionResponse;
 import me.mrfunny.interactionapi.util.ConsumerUtil;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,10 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
@@ -25,7 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public abstract class InteractionInvocation {
+public class InteractionInvocation {
     protected boolean deferred = false;
     protected final IReplyCallback interaction;
     protected InteractionHook interactionHook = null;
@@ -79,7 +76,7 @@ public abstract class InteractionInvocation {
                 ConsumerUtil.accept(messageConsumer, this);
             });
         } else if(
-                response instanceof ModalResponse modalResponse &&
+                response instanceof Modal modal &&
                         interaction instanceof GenericCommandInteractionEvent commandInteraction
         ) {
             if(deferred) {
@@ -87,7 +84,7 @@ public abstract class InteractionInvocation {
             } else if(ephemeral) {
                 throw new IllegalArgumentException("Modals can't be ephemeral");
             }
-            commandInteraction.replyModal(modalResponse).queue(s -> ConsumerUtil.accept(messageConsumer, this));
+            commandInteraction.replyModal(modal).queue(s -> ConsumerUtil.accept(messageConsumer, this));
         }
     }
     
@@ -131,7 +128,7 @@ public abstract class InteractionInvocation {
             }
             setInteractionHook(createSend(messageContent, ephemeral).complete());
         } else if(
-                response instanceof ModalResponse modalResponse &&
+                response instanceof Modal modal &&
                         interaction instanceof GenericCommandInteractionEvent commandInteraction
         ) {
             if(deferred) {
@@ -139,7 +136,7 @@ public abstract class InteractionInvocation {
             } else if(ephemeral) {
                 throw new IllegalArgumentException("Modals can't be ephemeral");
             }
-            commandInteraction.replyModal(modalResponse).complete();
+            commandInteraction.replyModal(modal).complete();
             return this;
         }
         else {
@@ -156,7 +153,7 @@ public abstract class InteractionInvocation {
     }
 
     
-    public InteractionInvocation send(ModalResponse response) {
+    public InteractionInvocation send(Modal response) {
         return this.send(response, false);
     }
 
@@ -174,7 +171,7 @@ public abstract class InteractionInvocation {
     }
 
     
-    public ModalCallbackAction createModal(ModalResponse response) {
+    public ModalCallbackAction createModal(Modal response) {
         if(this.interaction instanceof GenericCommandInteractionEvent commandInteraction) {
             return commandInteraction.replyModal(response);
         }

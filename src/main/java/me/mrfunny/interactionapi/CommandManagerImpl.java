@@ -5,6 +5,7 @@ import me.mrfunny.interactionapi.commands.context.ContextCommandInvocation;
 import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
 import me.mrfunny.interactionapi.commands.context.UserContextCommand;
 import me.mrfunny.interactionapi.internal.Command;
+import me.mrfunny.interactionapi.internal.InteractionInvocation;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
 import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
@@ -12,15 +13,16 @@ import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.SlashCommandResolver;
-import me.mrfunny.interactionapi.modals.ModalInvocation;
-import me.mrfunny.interactionapi.response.ModalResponse;
+import me.mrfunny.interactionapi.response.Modal;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 
 import java.util.HashMap;
 
@@ -99,10 +101,12 @@ class CommandManagerImpl implements CommandManager {
 
     @Override
     public boolean processModalInteraction(ModalInteractionEvent event) {
-        ModalResponse cached = ResponseCache.getCached(event, ModalResponse.class);
+        Modal cached = ResponseCache.getCached(event, Modal.class);
         if(cached == null) {
-            event.reply("Interaction expired").setEphemeral(true).queue();
-            return true;
+            cached = ResponseCache.getPermanent(event.getModalId(), Modal.class);
+        }
+        if(cached == null) {
+            return false;
         }
         try {
             JdaModalWrapper.mapAfterRun(event, cached);
@@ -111,10 +115,14 @@ class CommandManagerImpl implements CommandManager {
         }
 
         if(event.getMember() != null) {
-            cached.onExecute(new ModalInvocation(event), event.getMember());
+            cached.onExecute(new InteractionInvocation(event), event.getMember());
             return true;
         }
-        cached.onExecute(new ModalInvocation(event), event.getUser());
+        cached.onExecute(new InteractionInvocation(event), event.getUser());
         return false;
+    }
+
+    public boolean processButtonInteraction(ButtonInteractionEvent event) {
+
     }
 }
