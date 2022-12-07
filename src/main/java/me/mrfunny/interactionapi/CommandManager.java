@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -28,4 +29,6 @@ public interface CommandManager {
     static ScheduledExecutorService getAsyncExecutor() {
         return asyncExecutor;
     }
+
+    boolean processButtonInteraction(ButtonInteractionEvent event);
 }

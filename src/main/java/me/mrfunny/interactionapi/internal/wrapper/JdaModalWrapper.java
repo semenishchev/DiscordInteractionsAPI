@@ -19,27 +19,39 @@ public class JdaModalWrapper {
         net.dv8tion.jda.api.interactions.modals.Modal.Builder modalBuilder = net.dv8tion.jda.api.interactions.modals.Modal.create(modal.getId(), modal.getTitle());
         ArrayList<Field> fields = new ArrayList<>();
         for(Field field : modal.getClass().getDeclaredFields()) {
-            if(field.getDeclaringClass().getName().equals(ModalField.class.getName())) {
+            if(field.getType().getName().equals(ModalField.class.getName())) {
+
                 ModalFieldData modalFieldData = field.getAnnotation(ModalFieldData.class);
                 if(modalFieldData == null) continue;
-                if((field.getModifiers() & Modifier.FINAL) == 0) {
-                    throw new RuntimeException("Field " + field.getDeclaringClass().getName() + "#" + field.getName() + " should be final!");
-                }
+//                if((field.getModifiers() & Modifier.FINAL) == 0) {
+//                    throw new RuntimeException("Field " + field.getDeclaringClass().getName() + "#" + field.getName() + " should be final!");
+//                }
 
                 // doing magic with reflection or setting a value to the private field
                 field.setAccessible(true);
-
+                String id = modalFieldData.id();
+                if(id.equals("")) {
+                    id = field.getName();
+                }
                 ModalFieldImpl modalField = new ModalFieldImpl()
-                        .setId(modalFieldData.id())
+                        .setId(id)
                         .setLabel(modalFieldData.label())
-                        .setPlaceholder(modalFieldData.placeholder())
                         .setInputStyle(modalFieldData.style())
                         .setMinLength(modalFieldData.minLength())
                         .setMaxLength(modalFieldData.maxLength())
                         .setRequired(modalFieldData.required());
+                String placeholder = modalFieldData.placeholder();
+                String defaultValue = modalFieldData.defaultValue();
+                if(!placeholder.equals("")) {
+                    modalField.setPlaceholder(placeholder);
+                }
 
+                if(!defaultValue.equals("")) {
+                    modalField.setValue(defaultValue);
+                }
                 field.set(modal, modalField);
                 fields.add(field);
+                modal.getFields().put(id, field);
             }
         }
         modal.onInit();

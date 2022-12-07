@@ -1,6 +1,7 @@
 package me.mrfunny.interactionapi.internal.cache;
 
 import me.mrfunny.interactionapi.CommandManager;
+import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.response.Modal;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -23,14 +24,33 @@ public class ResponseCache {
             }
             return false;
         });
+        searchers.put(Button.class, (interaction, gotResponse) -> {
+            if(gotResponse instanceof Button response) {
+                return response.getCreatedFor().getIdLong() == interaction.getUser().getIdLong();
+            }
+            return false;
+        });
     }
 
-    public static void handle(CachedResponse cachedResponse) {
+    public static boolean decide(CachedResponse cachedResponse) {
         if((!cachedResponse.isPermanent() || cachedResponse.deleteAfter() != -1) && cachedResponse.getCreatedFor() != null) {
             CommandManager.getAsyncExecutor().schedule(() -> responses.remove(cachedResponse), cachedResponse.deleteAfter(), TimeUnit.SECONDS);
-            return;
+            return true;
         }
         permanentResponses.add(cachedResponse);
+        return false;
+    }
+
+    public static void addCached(CachedResponse cachedResponse) {
+        if(cachedResponse.deleteAfter() < 1) {
+            throw new RuntimeException("Cached " + cachedResponse.getClass().getSimpleName() + " cannot have delete time less than 0");
+        }
+        responses.add(cachedResponse);
+        CommandManager.getAsyncExecutor().schedule(() -> responses.remove(cachedResponse), cachedResponse.deleteAfter(), TimeUnit.SECONDS);
+    }
+
+    public static void addPermanent(CachedResponse response) {
+        permanentResponses.add(response);
     }
 
     public static <T extends CachedResponse> T getCached(GenericInteractionCreateEvent event, Class<T> toSearch) {

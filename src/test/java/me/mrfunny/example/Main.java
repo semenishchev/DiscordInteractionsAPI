@@ -1,6 +1,8 @@
 package me.mrfunny.example;
 
+import me.mrfunny.example.modal.SurveyModal;
 import me.mrfunny.interactionapi.CommandManager;
+import me.mrfunny.interactionapi.CommandManagerAdapter;
 import me.mrfunny.interactionapi.response.Modal;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -13,16 +15,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Properties;
 
-public class Main extends ListenerAdapter {
-    private static CommandManager manager;
+public class Main {
+    public static SurveyModal surveyModal = new SurveyModal();
     public static void main(String[] args) throws InterruptedException, IOException {
         Properties properties = getProperties();
         if (properties == null) return;
 
         JDA jda = JDABuilder.createDefault(properties.getProperty("token")).build();
-        jda.addEventListener(new Main());
+        CommandManager manager = CommandManager.manage(jda);
+        jda.addEventListener(new CommandManagerAdapter(manager));
         jda.awaitReady();
-        manager = CommandManager.manage(jda);
         manager.registerCommand(new ExampleCommand());
         manager.registerCommand(new AnotherExample());
     }
@@ -47,15 +49,5 @@ public class Main extends ListenerAdapter {
             properties.setProperty("token", token);
         }
         return properties;
-    }
-
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if(manager.processCommandInteraction(event)) return;
-        System.out.println("unknown command");
-    }
-
-    @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
     }
 }

@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi;
 
+import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.commands.context.ContextCommand;
 import me.mrfunny.interactionapi.commands.context.ContextCommandInvocation;
 import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
@@ -22,7 +23,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 
 import java.util.HashMap;
 
@@ -119,10 +119,24 @@ class CommandManagerImpl implements CommandManager {
             return true;
         }
         cached.onExecute(new InteractionInvocation(event), event.getUser());
-        return false;
+        return true;
     }
 
+    @Override
     public boolean processButtonInteraction(ButtonInteractionEvent event) {
+        Button cached = ResponseCache.getCached(event, Button.class);
+        if(cached == null) {
+            cached = ResponseCache.getPermanent(event.getComponentId(), Button.class);
+        }
+        if(cached == null) {
+            return false;
+        }
 
+        if(event.getMember() != null) {
+            cached.onExecute(new InteractionInvocation(event), event.getMember());
+            return true;
+        }
+        cached.onExecute(new InteractionInvocation(event), event.getUser());
+        return true;
     }
 }

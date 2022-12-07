@@ -29,6 +29,11 @@ public class AnotherExample implements SlashCommand {
         invocation.send(new MessageContent(input));
     }
 
+    @Subcommand(name = "survey")
+    public void takeSurvey(SlashCommandInvocation invocation) {
+        invocation.send(Main.surveyModal);
+    }
+
     @Subcommand(name = "executesync")
     @Sync
     public void executeSync(SlashCommandInvocation invocation) { // the invocation of the method would be done syncronised

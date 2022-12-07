@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.internal;
 
+import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
 import me.mrfunny.interactionapi.response.Modal;
@@ -84,7 +85,11 @@ public class InteractionInvocation {
             } else if(ephemeral) {
                 throw new IllegalArgumentException("Modals can't be ephemeral");
             }
-            commandInteraction.replyModal(modal).queue(s -> ConsumerUtil.accept(messageConsumer, this));
+            try {
+                createModalResponse(commandInteraction, modal).queue(s -> ConsumerUtil.accept(messageConsumer, this));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     
@@ -136,7 +141,11 @@ public class InteractionInvocation {
             } else if(ephemeral) {
                 throw new IllegalArgumentException("Modals can't be ephemeral");
             }
-            commandInteraction.replyModal(modal).complete();
+            try {
+                createModalResponse(commandInteraction, modal).complete();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return this;
         }
         else {
@@ -145,6 +154,10 @@ public class InteractionInvocation {
 
 
         return this;
+    }
+
+    protected ModalCallbackAction createModalResponse(GenericCommandInteractionEvent event, Modal modal) throws Exception {
+        return event.replyModal(modal.getMappedModal());
     }
 
     
@@ -169,15 +182,6 @@ public class InteractionInvocation {
         ResponseMapper.map(content, callbackAction);
         return callbackAction;
     }
-
-    
-    public ModalCallbackAction createModal(Modal response) {
-        if(this.interaction instanceof GenericCommandInteractionEvent commandInteraction) {
-            return commandInteraction.replyModal(response);
-        }
-        return null;
-    }
-
     
     public WebhookMessageEditAction<Message> createEdit(MessageContent newContent) {
         if(!replied) {

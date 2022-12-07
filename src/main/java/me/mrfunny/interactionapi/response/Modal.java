@@ -2,6 +2,7 @@ package me.mrfunny.interactionapi.response;
 
 import me.mrfunny.interactionapi.common.SimpleExecutable;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
+import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -23,21 +24,33 @@ public class Modal implements CachedResponse, SimpleExecutable, net.dv8tion.jda.
     private final HashMap<String, Field> fields = new HashMap<>();
     private final User createdFor;
     private final int deleteAfter;
+    private net.dv8tion.jda.api.interactions.modals.Modal mappedModal = null;
 
     public Modal(User createdFor, int deleteAfter) {
         this.createdFor = createdFor;
         this.deleteAfter = deleteAfter;
-        this.init();
+        ResponseCache.decide(this);
     }
 
     public Modal(String id, String title) {
-        this(null);
+        this.deleteAfter = -1;
+        this.createdFor = null;
         this.id = id;
         this.title = title;
+        ResponseCache.addPermanent(this);
+        try {
+            mappedModal = JdaModalWrapper.buildModalToRun(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Modal(User createdFor) {
         this(createdFor, ResponseCache.DEFAULT_DELETE_AFTER);
+    }
+
+    public net.dv8tion.jda.api.interactions.modals.Modal getMappedModal() throws Exception {
+        return mappedModal == null ? JdaModalWrapper.buildModalToRun(this) : mappedModal;
     }
 
     public HashMap<String, Field> getFields() {
