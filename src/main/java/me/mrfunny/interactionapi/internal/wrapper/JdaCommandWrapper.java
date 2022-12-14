@@ -14,20 +14,24 @@ public class JdaCommandWrapper {
     public static CommandData wrap(RegisteredCommand command) {
         SlashCommandData initial;
         try {
-            initial = Commands.slash(command.getName(), ((SlashCommand)command.getCommandBlueprint()).description()).setGuildOnly(command.getCommandBlueprint().isGuildOnly());
+            initial = Commands
+                    .slash(command.getName(), ((SlashCommand)command.getCommandBlueprint()).description())
+                    .setGuildOnly(command.getCommandBlueprint().isGuildOnly());
         } catch (IllegalArgumentException exception) {
-            throw new RuntimeException("\nFailure while registering command " + command.getCommandBlueprint().getClass().getName() + ": " + exception.getMessage());
+            throw new RuntimeException(
+                    "\nFailure while registering command " +
+                    command.getCommandBlueprint().getClass().getName() + ": " +
+                    exception.getMessage()
+            );
         }
         if(command.getMainExecutor() != null) {
             initial.addOptions(processExecutor(command.getMainExecutor()));
         } else {
             for(CommandExecutor subcommand : command.getSubcommands()) {
                 initial.addSubcommands(
-                        new SubcommandData(
-                                subcommand.getName(),
-                                subcommand.getDescription()
-                        ).addOptions(processExecutor(subcommand)
-                        ));
+                        new SubcommandData(subcommand.getName(), subcommand.getDescription())
+                                .addOptions(processExecutor(subcommand))
+                );
             }
         }
         return initial;

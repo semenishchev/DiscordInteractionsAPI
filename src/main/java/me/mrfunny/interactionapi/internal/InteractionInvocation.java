@@ -1,6 +1,5 @@
 package me.mrfunny.interactionapi.internal;
 
-import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
 import me.mrfunny.interactionapi.response.Modal;
@@ -13,6 +12,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
@@ -134,7 +134,7 @@ public class InteractionInvocation {
             setInteractionHook(createSend(messageContent, ephemeral).complete());
         } else if(
                 response instanceof Modal modal &&
-                        interaction instanceof GenericCommandInteractionEvent commandInteraction
+                        interaction instanceof IModalCallback commandInteraction
         ) {
             if(deferred) {
                 throw new RuntimeException("Defer reply does not support modals");
@@ -156,7 +156,7 @@ public class InteractionInvocation {
         return this;
     }
 
-    protected ModalCallbackAction createModalResponse(GenericCommandInteractionEvent event, Modal modal) throws Exception {
+    protected ModalCallbackAction createModalResponse(IModalCallback event, Modal modal) throws Exception {
         return event.replyModal(modal.getMappedModal());
     }
 

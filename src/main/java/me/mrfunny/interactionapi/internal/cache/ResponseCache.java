@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 
@@ -15,7 +16,7 @@ import java.util.function.BiPredicate;
 public class ResponseCache {
     public static final int DEFAULT_DELETE_AFTER = 300;
     private final static ArrayList<CachedResponse> responses = new ArrayList<>();
-    private final static ArrayList<CachedResponse> permanentResponses = new ArrayList<>();
+    private final static HashSet<CachedResponse> permanentResponses = new HashSet<>();
     private final static HashMap<Class<? extends CachedResponse>, BiPredicate<GenericInteractionCreateEvent, CachedResponse>> searchers = new HashMap<>();
     static {
         searchers.put(Modal.class, (interaction, gotResponse) -> {

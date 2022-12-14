@@ -1,8 +1,10 @@
 package me.mrfunny.example;
 
+import me.mrfunny.example.button.SurveyButton;
 import me.mrfunny.example.modal.SurveyModal;
 import me.mrfunny.interactionapi.CommandManager;
 import me.mrfunny.interactionapi.CommandManagerAdapter;
+import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.response.Modal;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -17,6 +19,7 @@ import java.util.Properties;
 
 public class Main {
     public static SurveyModal surveyModal = new SurveyModal();
+    public static Button takeSurvey = new SurveyButton();
     public static void main(String[] args) throws InterruptedException, IOException {
         Properties properties = getProperties();
         if (properties == null) return;

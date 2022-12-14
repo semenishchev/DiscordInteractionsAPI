@@ -1,5 +1,7 @@
 package me.mrfunny.interactionapi.response;
 
+import me.mrfunny.interactionapi.internal.cache.ResponseCache;
+import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import me.mrfunny.interactionapi.response.interfaces.InteractionResponse;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -71,6 +73,11 @@ public class MessageContent implements InteractionResponse, Cloneable {
     }
 
     public MessageContent addActionRow(ItemComponent... components) {
+        for(ItemComponent component : components) {
+            if(component instanceof CachedResponse cached) {
+                ResponseCache.decide(cached);
+            }
+        }
         this.components.add(ActionRow.of(components));
         return this;
     }

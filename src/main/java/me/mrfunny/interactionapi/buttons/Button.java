@@ -1,6 +1,7 @@
 package me.mrfunny.interactionapi.buttons;
 
 import me.mrfunny.interactionapi.common.SimpleExecutable;
+import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -50,6 +51,7 @@ public class Button implements CachedResponse, SimpleExecutable, net.dv8tion.jda
 
     public Button(String id, String label, ButtonStyle style, boolean disabled, Emoji emoji) {
         this(id, label, style, null, disabled, emoji);
+
     }
 
     public Button(String id, String label, ButtonStyle style, String url, boolean disabled, Emoji emoji) {
@@ -59,10 +61,12 @@ public class Button implements CachedResponse, SimpleExecutable, net.dv8tion.jda
         this.url = url;
         this.disabled = disabled;
         this.emoji = (EmojiUnion) emoji;
+        ResponseCache.addPermanent(this);
     }
 
     public Button(User createdFor) {
         this.createdFor = createdFor;
+        this.style = ButtonStyle.PRIMARY;
     }
 
     public Button() {
@@ -123,18 +127,23 @@ public class Button implements CachedResponse, SimpleExecutable, net.dv8tion.jda
     @NotNull
     @Override
     public DataObject toData() {
-        DataObject json = DataObject.empty();
-        json.put("type", 2);
-        json.put("label", label);
-        json.put("style", style.getKey());
-        json.put("disabled", disabled);
-        if (emoji != null)
-            json.put("emoji", emoji);
-        if (url != null)
-            json.put("url", url);
-        else
-            json.put("custom_id", id);
-        return json;
+        try {
+            DataObject json = DataObject.empty();
+            json.put("type", 2);
+            json.put("label", label);
+            json.put("style", style.getKey());
+            json.put("disabled", disabled);
+            if (emoji != null)
+                json.put("emoji", emoji);
+            if (url != null)
+                json.put("url", url);
+            else
+                json.put("custom_id", id);
+            return json;
+        } catch (Exception exception) {
+            throw new RuntimeException("Button is not finished. Required fields are `id`, `label` and `style`");
+        }
+
     }
 
     @Override

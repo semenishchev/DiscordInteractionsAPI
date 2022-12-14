@@ -1,8 +1,10 @@
 package me.mrfunny.example;
 
+import me.mrfunny.example.button.NameButton;
 import me.mrfunny.interactionapi.annotation.Parameter;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.annotation.Sync;
+import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.commands.slash.SlashCommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
 import me.mrfunny.interactionapi.response.MessageContent;
@@ -33,6 +35,20 @@ public class AnotherExample implements SlashCommand {
     public void takeSurvey(SlashCommandInvocation invocation) {
         invocation.send(Main.surveyModal);
     }
+
+    @Subcommand
+    public void actions(SlashCommandInvocation invocation) {
+        invocation.defer(true);
+        invocation.send(
+                new MessageContent(
+                        new EmbedBuilder()
+                                .setTitle("Please, select what you would like to do")
+                                .build()
+                )
+                        .addActionRow(new NameButton(invocation.getUser()), Main.takeSurvey)
+        );
+    }
+
 
     @Subcommand(name = "executesync")
     @Sync

@@ -19,7 +19,6 @@ public class SurveyModal extends Modal {
     @Override
     public void onExecute(InteractionInvocation invocation, Member executor) {
         invocation.defer(true);
-        System.out.println("getValue");
         invocation.send(new MessageContent(new EmbedBuilder().setTitle("Your reply").setDescription(testField.getValue()).build()));
     }
 }

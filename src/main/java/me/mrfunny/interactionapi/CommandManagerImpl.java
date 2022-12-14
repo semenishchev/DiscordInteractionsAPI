@@ -15,6 +15,7 @@ import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.SlashCommandResolver;
 import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -22,7 +23,9 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 import java.util.HashMap;
 
@@ -131,12 +134,21 @@ class CommandManagerImpl implements CommandManager {
         if(cached == null) {
             return false;
         }
-
         if(event.getMember() != null) {
+            System.out.println("cached member");
             cached.onExecute(new InteractionInvocation(event), event.getMember());
             return true;
         }
         cached.onExecute(new InteractionInvocation(event), event.getUser());
         return true;
+    }
+
+    @Override
+    public <T, S extends SelectMenu> boolean processSelectMenuInteraction(GenericSelectMenuInteractionEvent<T, S> event) {
+        S menu = event.getComponent();
+        if(menu instanceof me.mrfunny.interactionapi.menus.SelectMenu<?> response) {
+            response,.
+        }
+        return false;
     }
 }

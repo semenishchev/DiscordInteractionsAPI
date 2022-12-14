@@ -7,5 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 public interface SimpleExecutable {
     default void onExecute(InteractionInvocation invocation, User executor) {}
 
-    default void onExecute(InteractionInvocation invocation, Member executor) {}
+    default void onExecute(InteractionInvocation invocation, Member executor) {
+        this.onExecute(invocation, executor.getUser());
+    }
 }
