@@ -32,6 +32,10 @@ public class MessageContent implements InteractionResponse, Cloneable {
         this.embeds.addAll(List.of(embeds));
     }
 
+    public MessageContent(EmbedBuilder embed) {
+        this.embeds.add(embed.build());
+    }
+
     public MessageContent addEmbed(MessageEmbed embed) {
         this.embeds.add(embed);
         return this;

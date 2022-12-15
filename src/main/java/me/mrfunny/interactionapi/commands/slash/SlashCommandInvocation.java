@@ -1,7 +1,9 @@
 package me.mrfunny.interactionapi.commands.slash;
 
 import me.mrfunny.interactionapi.internal.InteractionInvocation;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -18,7 +20,7 @@ public class SlashCommandInvocation extends InteractionInvocation {
         return castedInteraction.getCommandId();
     }
 
-    public MessageChannelUnion getChannel() {
+    public MessageChannel getChannel() {
         return castedInteraction.getChannel();
     }
 

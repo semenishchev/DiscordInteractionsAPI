@@ -138,7 +138,6 @@ class CommandManagerImpl implements CommandManager {
             return false;
         }
         if(event.getMember() != null) {
-            System.out.println("cached member");
             cached.onExecute(new ComponentInteractionInvocation(event), event.getMember());
             return true;
         }
@@ -148,7 +147,6 @@ class CommandManagerImpl implements CommandManager {
 
     @Override
     public <T, S extends SelectMenu> boolean processSelectMenuInteraction(GenericSelectMenuInteractionEvent<T, S> event) {
-        S rawMenu = event.getComponent();
         me.mrfunny.interactionapi.menus.SelectMenu<?> cached = ResponseCache.getCached(event, me.mrfunny.interactionapi.menus.SelectMenu.class);
         if(cached == null) {
             cached = ResponseCache.getPermanent(event.getComponentId(), me.mrfunny.interactionapi.menus.SelectMenu.class);
@@ -157,7 +155,6 @@ class CommandManagerImpl implements CommandManager {
             return false;
         }
         if(event.getMember() != null) {
-            System.out.println("cached member");
             cached.onExecute(new SelectMenuInvocation<>(event), event.getMember());
             return true;
         }

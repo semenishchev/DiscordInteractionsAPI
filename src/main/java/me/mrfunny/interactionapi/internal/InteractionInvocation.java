@@ -37,7 +37,7 @@ public class InteractionInvocation {
     }
     
     public void deferAsync() {
-        this.deferAsync(false, null);
+        this.deferAsync(ephemeral, null);
     }
     
     public void deferAsync(boolean ephemeral) {
@@ -46,7 +46,7 @@ public class InteractionInvocation {
 
     
     public void deferAsync(Consumer<InteractionInvocation> onComplete) {
-        this.deferAsync(false, onComplete);
+        this.deferAsync(ephemeral, onComplete);
     }
 
     public void deferAsync(boolean ephemeral, Consumer<InteractionInvocation> onComplete) {
@@ -100,11 +100,11 @@ public class InteractionInvocation {
     }
 
     public void sendAsync(InteractionResponse response, Consumer<InteractionInvocation> consumer) {
-        this.sendAsync(response, false, consumer);
+        this.sendAsync(response, ephemeral, consumer);
     }
     
     public void sendAsync(InteractionResponse response) {
-        this.sendAsync(response, false, null);
+        this.sendAsync(response, ephemeral, null);
     }
     
     public void editAsync(MessageContent messageContent, Consumer<Message> consumer) {
@@ -112,7 +112,7 @@ public class InteractionInvocation {
     }
     
     public InteractionInvocation defer() {
-        return this.defer(false);
+        return this.defer(ephemeral);
     }
 
     public InteractionInvocation defer(boolean ephemeral) {
@@ -164,12 +164,12 @@ public class InteractionInvocation {
 
     
     public InteractionInvocation send(InteractionResponse response) {
-        return this.send(response, false);
+        return this.send(response, ephemeral);
     }
 
     
     public InteractionInvocation send(Modal response) {
-        return this.send(response, false);
+        return this.send(response, ephemeral);
     }
 
     
@@ -182,7 +182,7 @@ public class InteractionInvocation {
     public ReplyCallbackAction createSend(MessageContent content, boolean ephemeral) {
         ReplyCallbackAction callbackAction = interaction.deferReply(ephemeral);
         ResponseMapper.map(content, callbackAction);
-        return callbackAction.setEphemeral(ephemeral);
+        return callbackAction;
     }
     
     public WebhookMessageEditAction<Message> createEdit(MessageContent newContent) {

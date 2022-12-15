@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.utils.messages.MessageCreateRequest;
 import net.dv8tion.jda.api.utils.messages.MessageEditRequest;
 import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 
@@ -30,7 +31,7 @@ public class ResponseMapper {
         return toApply;
     }
 
-    public static void map(MessageContent messageContent, ReplyCallbackAction toApply) {
+    public static void map(MessageContent messageContent, MessageCreateRequest<?> toApply) {
         if(messageContent.getContent() != null) {
             toApply.setContent(messageContent.getContent());
         }

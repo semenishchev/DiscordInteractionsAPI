@@ -22,6 +22,11 @@ public class ModalFieldImpl implements ModalField {
     }
 
     @Override
+    public boolean isPresent() {
+        return value != null && !value.equals("");
+    }
+
+    @Override
     public String getValue() {
         return value;
     }

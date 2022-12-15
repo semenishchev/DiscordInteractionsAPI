@@ -1,7 +1,5 @@
 package me.mrfunny.example;
 
-
-
 import me.mrfunny.interactionapi.menus.OptionCreator;
 import me.mrfunny.interactionapi.menus.SelectMenuInvocation;
 import me.mrfunny.interactionapi.menus.StringSelectMenu;

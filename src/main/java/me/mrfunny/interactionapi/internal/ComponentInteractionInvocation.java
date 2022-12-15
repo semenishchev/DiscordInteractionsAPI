@@ -3,6 +3,8 @@ package me.mrfunny.interactionapi.internal;
 import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
@@ -40,5 +42,13 @@ public class ComponentInteractionInvocation extends InteractionInvocation{
 
     private MessageEditCallbackAction createAck() {
         return this.interaction.deferEdit();
+    }
+
+    public MessageChannel getChannel() {
+        return this.interaction.getChannel();
+    }
+
+    public Guild getGuild() {
+        return this.interaction.getGuild();
     }
 }

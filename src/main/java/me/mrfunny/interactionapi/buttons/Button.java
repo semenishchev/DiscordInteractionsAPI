@@ -56,6 +56,14 @@ public class Button implements CachedResponse, ComplexExecutable<ComponentIntera
         this(id, label, style, null, disabled, emoji);
     }
 
+    public Button(String id, String label, ButtonStyle style, Emoji emoji) {
+        this(id, label, style, null, false, emoji);
+    }
+
+    public Button(String id, String label, ButtonStyle style) {
+        this(id, label, style, null, false, null);
+    }
+
     public Button(String id, String label, ButtonStyle style, String url, boolean disabled, Emoji emoji) {
         this.id = id;
         this.label = label;

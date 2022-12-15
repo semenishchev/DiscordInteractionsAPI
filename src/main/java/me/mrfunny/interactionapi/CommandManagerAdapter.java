@@ -34,6 +34,11 @@ public class CommandManagerAdapter extends ListenerAdapter {
     }
 
     @Override
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        manager.processButtonInteraction(event);
+    }
+
+    @Override
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         manager.processContextInteraction(event);
     }

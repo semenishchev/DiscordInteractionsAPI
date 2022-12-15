@@ -3,6 +3,8 @@ package me.mrfunny.interactionapi.modals;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 public interface ModalField {
+    boolean isPresent();
+
     String getValue();
 
     ModalFieldImpl setId(String id);

@@ -6,9 +6,8 @@ import java.util.function.Function;
 
 public interface Command {
     String name();
-
     default boolean isGuildOnly() {
-        return false;
+        return true;
     }
     default boolean isGlobal() {
         return true;
