@@ -1,6 +1,9 @@
 package me.mrfunny.interactionapi.buttons;
 
+import me.mrfunny.interactionapi.common.ComplexExecutable;
 import me.mrfunny.interactionapi.common.SimpleExecutable;
+import me.mrfunny.interactionapi.internal.ComponentInteractionInvocation;
+import me.mrfunny.interactionapi.internal.InteractionInvocation;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.entities.User;
@@ -15,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class Button implements CachedResponse, SimpleExecutable, net.dv8tion.jda.api.interactions.components.buttons.Button {
+public class Button implements CachedResponse, ComplexExecutable<ComponentInteractionInvocation>, net.dv8tion.jda.api.interactions.components.buttons.Button {
     private String id;
     private String label;
     private ButtonStyle style;
@@ -47,11 +50,10 @@ public class Button implements CachedResponse, SimpleExecutable, net.dv8tion.jda
     private String url;
     private boolean disabled;
     private EmojiUnion emoji;
-    private User createdFor;
+    private User createdFor = null;
 
     public Button(String id, String label, ButtonStyle style, boolean disabled, Emoji emoji) {
         this(id, label, style, null, disabled, emoji);
-
     }
 
     public Button(String id, String label, ButtonStyle style, String url, boolean disabled, Emoji emoji) {

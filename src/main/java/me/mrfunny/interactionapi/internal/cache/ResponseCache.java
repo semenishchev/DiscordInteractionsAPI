@@ -2,6 +2,7 @@ package me.mrfunny.interactionapi.internal.cache;
 
 import me.mrfunny.interactionapi.CommandManager;
 import me.mrfunny.interactionapi.buttons.Button;
+import me.mrfunny.interactionapi.menus.SelectMenu;
 import me.mrfunny.interactionapi.response.Modal;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -31,10 +32,18 @@ public class ResponseCache {
             }
             return false;
         });
+
+        searchers.put(SelectMenu.class, (interaction, gotResponse) -> {
+            if(gotResponse instanceof SelectMenu<?> response) {
+                return response.getCreatedFor().getIdLong() == interaction.getUser().getIdLong();
+            }
+            return false;
+        });
     }
 
     public static boolean decide(CachedResponse cachedResponse) {
         if((!cachedResponse.isPermanent() || cachedResponse.deleteAfter() != -1) && cachedResponse.getCreatedFor() != null) {
+            responses.add(cachedResponse);
             CommandManager.getAsyncExecutor().schedule(() -> responses.remove(cachedResponse), cachedResponse.deleteAfter(), TimeUnit.SECONDS);
             return true;
         }

@@ -46,6 +46,7 @@ public class AnotherExample implements SlashCommand {
                                 .build()
                 )
                         .addActionRow(new NameButton(invocation.getUser()), Main.takeSurvey)
+                        .addActionRow(new TestSelectMenu())
         );
     }
 

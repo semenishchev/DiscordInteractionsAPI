@@ -7,11 +7,13 @@ import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.utils.messages.MessageEditRequest;
 import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 
 public class ResponseMapper {
-    public static MessageEditAction map(MessageContent messageContent, MessageEditAction toApply) {
+    public static MessageEditRequest<?> map(MessageContent messageContent, MessageEditRequest<?> toApply) {
         if(messageContent.getContent() != null) {
             toApply.setContent(messageContent.getContent());
         }

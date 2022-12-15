@@ -6,6 +6,7 @@ import me.mrfunny.interactionapi.commands.context.ContextCommandInvocation;
 import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
 import me.mrfunny.interactionapi.commands.context.UserContextCommand;
 import me.mrfunny.interactionapi.internal.Command;
+import me.mrfunny.interactionapi.internal.ComponentInteractionInvocation;
 import me.mrfunny.interactionapi.internal.InteractionInvocation;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
@@ -14,10 +15,12 @@ import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.SlashCommandResolver;
+import me.mrfunny.interactionapi.menus.SelectMenuInvocation;
 import me.mrfunny.interactionapi.response.Modal;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -136,19 +139,29 @@ class CommandManagerImpl implements CommandManager {
         }
         if(event.getMember() != null) {
             System.out.println("cached member");
-            cached.onExecute(new InteractionInvocation(event), event.getMember());
+            cached.onExecute(new ComponentInteractionInvocation(event), event.getMember());
             return true;
         }
-        cached.onExecute(new InteractionInvocation(event), event.getUser());
+        cached.onExecute(new ComponentInteractionInvocation(event), event.getUser());
         return true;
     }
 
     @Override
     public <T, S extends SelectMenu> boolean processSelectMenuInteraction(GenericSelectMenuInteractionEvent<T, S> event) {
-        S menu = event.getComponent();
-        if(menu instanceof me.mrfunny.interactionapi.menus.SelectMenu<?> response) {
-            response,.
+        S rawMenu = event.getComponent();
+        me.mrfunny.interactionapi.menus.SelectMenu<?> cached = ResponseCache.getCached(event, me.mrfunny.interactionapi.menus.SelectMenu.class);
+        if(cached == null) {
+            cached = ResponseCache.getPermanent(event.getComponentId(), me.mrfunny.interactionapi.menus.SelectMenu.class);
         }
-        return false;
+        if(cached == null) {
+            return false;
+        }
+        if(event.getMember() != null) {
+            System.out.println("cached member");
+            cached.onExecute(new SelectMenuInvocation<>(event), event.getMember());
+            return true;
+        }
+        cached.onExecute(new SelectMenuInvocation<>(event), event.getUser());
+        return true;
     }
 }

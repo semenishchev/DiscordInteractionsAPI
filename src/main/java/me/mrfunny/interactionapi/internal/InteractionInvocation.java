@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ public class InteractionInvocation {
     protected InteractionHook interactionHook = null;
     protected Message possibleMessage = null;
     protected boolean replied = false;
+    protected boolean ephemeral = false;
 
     public InteractionInvocation(IReplyCallback replyCallback) {
         this.interaction = replyCallback;
@@ -180,13 +182,14 @@ public class InteractionInvocation {
     public ReplyCallbackAction createSend(MessageContent content, boolean ephemeral) {
         ReplyCallbackAction callbackAction = interaction.deferReply(ephemeral);
         ResponseMapper.map(content, callbackAction);
-        return callbackAction;
+        return callbackAction.setEphemeral(ephemeral);
     }
     
     public WebhookMessageEditAction<Message> createEdit(MessageContent newContent) {
-        if(!replied) {
+        if(!replied && !deferred) {
             throw new RuntimeException("The interaction can't be edited while not being replied");
         }
+
         return ResponseMapper.mapEdit(newContent, this.interactionHook, this.possibleMessage.getId());
     }
 
@@ -219,6 +222,11 @@ public class InteractionInvocation {
     public void setInteractionHook(InteractionHook interactionHook) {
         this.replied = true;
         this.interactionHook = interactionHook;
+    }
+
+    public InteractionInvocation ephemeral(boolean value) {
+        this.ephemeral = value;
+        return this;
     }
 
     public InteractionHook getInteractionHook() {

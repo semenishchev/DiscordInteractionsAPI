@@ -39,11 +39,6 @@ public class CommandManagerAdapter extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        manager.processButtonInteraction(event);
-    }
-
-    @Override
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
         manager.processSelectMenuInteraction(event);
     }
