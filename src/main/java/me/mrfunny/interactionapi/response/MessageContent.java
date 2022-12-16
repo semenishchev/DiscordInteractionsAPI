@@ -1,16 +1,20 @@
 package me.mrfunny.interactionapi.response;
 
+import me.mrfunny.interactionapi.common.channel.Channels;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import me.mrfunny.interactionapi.response.interfaces.InteractionResponse;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.components.*;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class MessageContent implements InteractionResponse, Cloneable {
@@ -84,6 +88,18 @@ public class MessageContent implements InteractionResponse, Cloneable {
         }
         this.components.add(ActionRow.of(components));
         return this;
+    }
+
+    public Message send(MessageChannel channel) {
+        return Channels.send(channel, this);
+    }
+
+    public void sendAsync(MessageChannel channel, Consumer<Message> consumer) {
+        Channels.sendAsync(channel, this, consumer);
+    }
+
+    public void sendAsync(MessageChannel channel) {
+        Channels.sendAsync(channel, this, null);
     }
 
     public String getContent() {

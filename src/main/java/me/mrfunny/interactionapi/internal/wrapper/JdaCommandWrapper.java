@@ -6,6 +6,7 @@ import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
 import me.mrfunny.interactionapi.internal.data.command.CommandParameter;
 import me.mrfunny.interactionapi.internal.data.command.CommandParameters;
 import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.ArrayList;

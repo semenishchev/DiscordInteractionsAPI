@@ -1,0 +1,63 @@
+{
+  "connections": {
+    "discord-token": "enter your token",
+    "mongodb": {
+      "connection-string": "mongodb://localhost:27017",
+      "database": "ticketbot",
+      "collection-prefix": "t_"
+    }
+  },
+  "settings": {
+    "guild-id": "123123123123123",
+    "categories": [
+      "12331231231231235",
+      "83721737123717237"
+    ],
+    "permissions": {
+      "view-ticket-roles": [],
+      "manage-users-roles": [],
+      "manage-ticket-roles": []
+    },
+    "tickets-per-user": 5,
+    "logs-channel": "1237123712731"
+  },
+
+  "messages": {
+    "in-ticket": {
+      "creation": {
+        "embed": {
+          "title": "Staff member will be with you soon"
+        },
+        "close-button": {
+          "text": "Close ticket",
+          "style": "DANGER"
+        }
+      },
+    },
+    "outside-ticket": {
+      "create-ticket-embed": {
+        "the": {
+          "title": {
+            "it": "Open a ticket",
+            "url": "https://google.com/"
+          },
+          "color": "#00ff00",
+          "fields": [
+            {
+              "name": "Things you need to make sure",
+              "value": "You like tacos\nYou are funny\nYou are respectful"
+            }
+          ],
+          "footer": {
+            "value": "This is a footer"
+          }
+        },
+        "create-ticket-button": {
+          "text": "Open a ticket",
+          "style": "PRIMARY"
+        }
+      },
+      "create-interaction-response": "Ticket %ticket% created!"
+    }
+  }
+}

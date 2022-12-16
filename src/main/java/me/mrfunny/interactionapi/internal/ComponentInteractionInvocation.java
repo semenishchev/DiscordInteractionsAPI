@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.internal;
 
+import me.mrfunny.interactionapi.common.InChannelInvocation;
 import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackA
 
 import java.util.function.Consumer;
 
-public class ComponentInteractionInvocation extends InteractionInvocation{
+public class ComponentInteractionInvocation extends InteractionInvocation implements InChannelInvocation {
     private final ComponentInteraction interaction;
     public ComponentInteractionInvocation(IReplyCallback replyCallback) {
         super(replyCallback);
@@ -44,6 +45,7 @@ public class ComponentInteractionInvocation extends InteractionInvocation{
         return this.interaction.deferEdit();
     }
 
+    @Override
     public MessageChannel getChannel() {
         return this.interaction.getChannel();
     }

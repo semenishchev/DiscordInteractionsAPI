@@ -78,6 +78,10 @@ public class ResponseCache {
     public static <T extends CachedResponse> T getPermanent(String id, Class<T> toReturn) {
         for(CachedResponse response : permanentResponses) {
             if(!toReturn.isAssignableFrom(response.getClass())) continue;
+            if(response.getId() == null) {
+                System.err.println(response.getClass().getName() + " has null ID");
+                continue;
+            }
             if(response.getId().equals(id)) {
                 return (T) response;
             }
