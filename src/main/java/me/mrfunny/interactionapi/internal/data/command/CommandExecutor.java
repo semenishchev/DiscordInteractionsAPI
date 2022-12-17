@@ -2,6 +2,7 @@ package me.mrfunny.interactionapi.internal.data.command;
 
 import me.mrfunny.interactionapi.CommandManager;
 import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
+import me.mrfunny.interactionapi.commands.slash.SubcommandGroupData;
 import me.mrfunny.interactionapi.internal.wrapper.util.ParameterMapper;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -18,8 +19,9 @@ public class CommandExecutor {
     private final String description;
     private final int contextArgumentIndex;
     private final boolean sync;
+    private final SubcommandGroupData group;
 
-    public CommandExecutor(RegisteredCommand source, String name, String description, Method callingMethod, CommandParameters parameters, int contextArgumentIndex, boolean sync) {
+    public CommandExecutor(RegisteredCommand source, String name, SubcommandGroupData group, String description, Method callingMethod, CommandParameters parameters, int contextArgumentIndex, boolean sync) {
         this.name = name;
         this.description = description;
         this.callingMethod = callingMethod;
@@ -28,6 +30,11 @@ public class CommandExecutor {
         this.source = source;
         this.sync = sync;
         this.contextArgumentIndex = contextArgumentIndex;
+        this.group = group;
+    }
+
+    public SubcommandGroupData getGroup() {
+        return group;
     }
 
     public String getName() {
@@ -52,7 +59,14 @@ public class CommandExecutor {
 
     private void execute0(SlashCommandInteractionEvent event) {
         try {
-            callingMethod.invoke(source.getCommandBlueprint(), injectInvokeArgs(event, event.getOptions()));
+            callingMethod.setAccessible(true);
+            Object source;
+            if(group != null) {
+                source = group.source();
+            } else {
+                source = this.source.getCommandBlueprint();
+            }
+            callingMethod.invoke(source, injectInvokeArgs(event, event.getOptions()));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

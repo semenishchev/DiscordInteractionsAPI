@@ -16,7 +16,12 @@ public class OpenTicketModal extends Modal {
         super("CREATE_TICKET_MODAL", "What's your problem");
     }
 
-    @ModalFieldData(label = "Brief description of your request", maxLength = 1000, style = TextInputStyle.PARAGRAPH)
+    @ModalFieldData(
+            label = "Brief description of your request",
+            placeholder = "You can always write more detailed request after ticket gets created",
+            maxLength = 1000,
+            style = TextInputStyle.PARAGRAPH
+    )
     ModalField description;
 
     @Override

@@ -1,25 +1,27 @@
 package me.mrfunny.interactionapi.internal.wrapper.resolver;
 
 import me.mrfunny.interactionapi.annotation.Sync;
-import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
-import me.mrfunny.interactionapi.internal.Command;
+import me.mrfunny.interactionapi.commands.slash.SlashCommand;
+import me.mrfunny.interactionapi.commands.slash.SubcommandGroup;
+import me.mrfunny.interactionapi.commands.slash.SubcommandGroupData;
+import me.mrfunny.interactionapi.internal.data.command.*;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.annotation.Main;
 import me.mrfunny.interactionapi.annotation.Parameter;
-import me.mrfunny.interactionapi.internal.data.command.CommandParameter;
-import me.mrfunny.interactionapi.internal.data.command.CommandParameters;
-import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.interfaces.ComplexResolver;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 public class SlashCommandResolver implements ComplexResolver<RegisteredCommand> {
     private final Class<?> commandClass;
     private RegisteredCommand command = null;
-    private final Command source;
+    private final SlashCommand source;
 
-    public SlashCommandResolver(Command commandInstance) {
+    public SlashCommandResolver(SlashCommand commandInstance) {
         this.commandClass = commandInstance.getClass();
         this.source = commandInstance;
     }
@@ -35,7 +37,7 @@ public class SlashCommandResolver implements ComplexResolver<RegisteredCommand> 
         for(Method method : commandClass.getMethods()) {
             if(method.isAnnotationPresent(Main.class)) {
                 if(gotMain) throw new IllegalStateException("Class " + commandClass.getName() + " has 2 or more main executable methods");
-                command.setMainExecutor(resolveExecutable(method));
+                command.setMainExecutor(resolveExecutable(method, null));
                 gotMain = true;
                 continue;
             }
@@ -43,11 +45,25 @@ public class SlashCommandResolver implements ComplexResolver<RegisteredCommand> 
             if(gotMain) {
                 throw new RuntimeException("Command can't have main executor and subcommands");
             }
-            command.addSubcommand(resolveExecutable(method));
+            command.addSubcommand(resolveExecutable(method, null));
+        }
+
+        for(SubcommandGroup group : source.subcommands()) {
+            SubcommandGroupData data = new SubcommandGroupData(group.name(), group.description(), group);
+            HashMap<String, CommandExecutor> executors = new HashMap<>();
+            for(Method method : group.getClass().getMethods()) {
+                if(method.isAnnotationPresent(Main.class)) {
+                    throw new RuntimeException("Cannot have Main method for group. Declared in " + commandClass.getName() + ", " + group.getClass().getName());
+                }
+                if(!method.isAnnotationPresent(Subcommand.class)) continue;
+                CommandExecutor executor = resolveExecutable(method, data);
+                executors.put(executor.getName(), executor);
+            }
+            command.addGroup(new RegisteredGroup(data, executors));
         }
     }
 
-    private CommandExecutor resolveExecutable(Method method) {
+    private CommandExecutor resolveExecutable(Method method, SubcommandGroupData group) {
 
         CommandParameters parameters = new CommandParameters();
         java.lang.reflect.Parameter[] methodParameters = method.getParameters();
@@ -72,14 +88,14 @@ public class SlashCommandResolver implements ComplexResolver<RegisteredCommand> 
             name = subcommandData.name();
             description = subcommandData.description();
         }
+
         if(name == null || name.equals("")) {
             name = method.getName();
         }
-
-        if(description == null || name.equals("")) {
+        if(description == null || description.equals("")) {
             description = "No description provided.";
         }
-        return new CommandExecutor(this.command, name, description, method, parameters, contextArgumentIndex, method.isAnnotationPresent(Sync.class));
+        return new CommandExecutor(this.command, name, group, description, method, parameters, contextArgumentIndex, method.isAnnotationPresent(Sync.class));
     }
 
     private static CommandParameter resolveParameter(java.lang.reflect.Parameter param, int index) {

@@ -7,6 +7,7 @@ import me.mrfunny.interactionapi.annotation.Parameter;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
+import me.mrfunny.interactionapi.commands.slash.SubcommandGroup;
 import me.mrfunny.interactionapi.response.MessageContent;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -14,11 +15,18 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bson.Document;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 public class TicketCommand implements SlashCommand {
     @Override
     public String name() {
         return "ticket";
+    }
+
+    @Override
+    public Collection<SubcommandGroup> subcommands() {
+        return List.of(new AdminGroup());
     }
 
     @Subcommand
@@ -80,5 +88,23 @@ public class TicketCommand implements SlashCommand {
     @Subcommand
     public void close(SlashCommandInvocation invocation) {
         TicketManager.handleTicketClosure(invocation);
+    }
+
+    private static class AdminGroup implements SubcommandGroup {
+
+        @Override
+        public String name() {
+            return "admin";
+        }
+
+        @Override
+        public String description() {
+            return "Admin commands";
+        }
+
+        @Subcommand
+        public void test(SlashCommandInvocation invocation) {
+            invocation.send(new MessageContent("Hello from subcommand group"));
+        }
     }
 }

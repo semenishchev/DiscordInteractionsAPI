@@ -5,12 +5,15 @@ import me.mrfunny.interactionapi.commands.context.ContextCommand;
 import me.mrfunny.interactionapi.commands.context.ContextCommandInvocation;
 import me.mrfunny.interactionapi.commands.context.MessageContextCommand;
 import me.mrfunny.interactionapi.commands.context.UserContextCommand;
+import me.mrfunny.interactionapi.commands.slash.SlashCommand;
+import me.mrfunny.interactionapi.commands.slash.SubcommandGroup;
 import me.mrfunny.interactionapi.internal.Command;
 import me.mrfunny.interactionapi.internal.ComponentInteractionInvocation;
 import me.mrfunny.interactionapi.internal.InteractionInvocation;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.internal.data.command.CommandExecutor;
 import me.mrfunny.interactionapi.internal.data.command.RegisteredCommand;
+import me.mrfunny.interactionapi.internal.data.command.RegisteredGroup;
 import me.mrfunny.interactionapi.internal.wrapper.JdaCommandWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.JdaModalWrapper;
 import me.mrfunny.interactionapi.internal.wrapper.resolver.ContextCommandResolver;
@@ -28,6 +31,8 @@ import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEven
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 import java.util.HashMap;
@@ -49,7 +54,7 @@ class CommandManagerImpl implements CommandManager {
             new ContextCommandResolver(contextCommand, userContextCommands, messageContextCommands);
             return;
         }
-        SlashCommandResolver resolver = new SlashCommandResolver(commandInstance);
+        SlashCommandResolver resolver = new SlashCommandResolver((SlashCommand) commandInstance);
         resolver.resolve();
         RegisteredCommand command = resolver.result();
         if(command == null) {
@@ -80,7 +85,15 @@ class CommandManagerImpl implements CommandManager {
         if(command == null) return false;
 
         if(event.getSubcommandName() != null) {
-            CommandExecutor subcommand = command.getSubcommand(event.getSubcommandName());
+            String name = event.getSubcommandName();
+            CommandExecutor subcommand;
+            if(event.getSubcommandGroup() != null) {
+                RegisteredGroup group = command.getGroups().get(event.getSubcommandGroup());
+                subcommand = group.executors().get(name);
+            } else {
+                subcommand = command.getSubcommand(name);
+            }
+
             if(subcommand == null) return false;
             subcommand.execute(event);
             return true;
