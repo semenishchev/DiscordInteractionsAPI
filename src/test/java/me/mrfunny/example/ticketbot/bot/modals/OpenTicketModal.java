@@ -22,7 +22,7 @@ public class OpenTicketModal extends Modal {
     @Override
     public void onExecute(InteractionInvocation invocation, Member executor) {
         invocation.defer(true);
-        TextChannel channel = Main.bot.getTicketManager().createTicket(executor);
+        TextChannel channel = Main.bot.getTicketManager().createTicket(executor, description.getValue());
         new MessageContent(
                 new EmbedBuilder()
                         .setTitle("Your original request")

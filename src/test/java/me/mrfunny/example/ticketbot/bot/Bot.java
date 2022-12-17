@@ -22,6 +22,7 @@ public class Bot {
     private final PermissionManager permissionManager;
     private final Guild guild;
     private final TextChannel logsChannel;
+    private final CategoryManager categoryManager;
     public Bot(DataObject connectionData) throws InterruptedException {
 
         this.jda = JDABuilder.create(connectionData.getString("discord-token"), Arrays.asList(GatewayIntent.values())).build();
@@ -35,10 +36,15 @@ public class Bot {
             throw new RuntimeException("Guild not found");
         }
         this.permissionManager = new PermissionManager(this);
+        this.categoryManager = new CategoryManager(this);
         manager.registerCommand(new AdminCommands());
         manager.registerCommand(new TicketCommand());
         this.ticketManager = new TicketManager(this);
         this.logsChannel = guild.getChannelById(TextChannel.class, Main.settings.getString("logs-channel"));
+    }
+
+    public CategoryManager getCategoryManager() {
+        return categoryManager;
     }
 
     public JDA getJda() {

@@ -50,7 +50,11 @@ public class TicketUtil {
 
         document.getElementById("transcriptTitle").text("Transcript of ticket with ID " + channel.getId()); // set title
         document.getElementById("guildname").text(channel.getGuild().getName()); // set guild name
-        document.getElementById("ticketname").text("#" + channel.getName() + "-" + channel.getTopic()); // set channel name
+        document.getElementById("ticketname").text("#" + channel.getName() + "-" + channel.getId()); // set channel name
+        String topic = channel.getTopic();
+        if(topic != null) {
+            document.getElementById("request").text(topic);
+        }
 
         Element chatLog = document.getElementById("chatlog"); // chat log
         for (Message message : messages.stream()

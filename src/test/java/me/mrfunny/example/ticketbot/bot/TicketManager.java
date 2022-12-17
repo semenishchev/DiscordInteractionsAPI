@@ -11,8 +11,10 @@ import me.mrfunny.interactionapi.response.MessageContent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TicketManager {
+    private final static int MAX_CHANNELS_PER_CATEGORY = 50;
     private final int maxTicketsPerUser;
     private final MessageContent helloMessage;
     private final List<Permission> allPermissions = Arrays.asList(Permission.values());
@@ -42,11 +45,12 @@ public class TicketManager {
         this.helloMessage = new MessageContent(EmbedUtil.fromData(creation.getObject("embed"))).addActionRow(bot.getComponents().CLOSE_TICKET_BUTTON);
     }
 
-    public TextChannel createTicket(Member member) {
+    public TextChannel createTicket(Member member, String request) {
         ChannelAction<TextChannel> creationProcess = Main.bot.getGuild()
                 .createTextChannel("ticket-" + member.getUser().getName())
                 .addPermissionOverride(Main.bot.getGuild().getSelfMember(), allPermissions, null)
                 .addPermissionOverride(Main.bot.getGuild().getPublicRole(), null, allPermissions)
+                .setTopic("Request: " + request)
                 .addPermissionOverride(member, memberPermissions, null);
 
         for(Role role : Main.bot.getPermissionManager().getRolesWithPermission(Permissions.VIEW_TICKETS)) {
@@ -57,6 +61,7 @@ public class TicketManager {
             creationProcess = creationProcess.addPermissionOverride(role, managerPermissions, null);
         }
         TextChannel channel = creationProcess.complete();
+
         Message message = helloMessage.send(channel);
         channel.pinMessageById(message.getIdLong()).complete();
         User user = member.getUser();
@@ -65,6 +70,11 @@ public class TicketManager {
                 .getLogsChannel()
                 .sendMessage(member.getAsMention() + " created a ticket " + channel.getAsMention() + " " + channel.getJumpUrl())
                 .complete();
+        for(Category category : Main.bot.getCategoryManager().getCategories()) {
+            if(category.getChannels().size() >= maxTicketsPerUser) continue;
+            channel.getManager().setParent(category).complete();
+            break;
+        }
         return channel;
     }
 
