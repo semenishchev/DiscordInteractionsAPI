@@ -4,9 +4,7 @@ import me.mrfunny.example.ticketbot.Main;
 import me.mrfunny.example.ticketbot.bot.permissions.Permissions;
 import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.internal.ComponentInteractionInvocation;
-import me.mrfunny.interactionapi.response.MessageContent;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.utils.data.DataObject;
 

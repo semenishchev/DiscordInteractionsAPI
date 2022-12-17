@@ -31,7 +31,8 @@ public class TicketManager {
     private final List<Permission> allPermissions = Arrays.asList(Permission.values());
     private final List<Permission> memberPermissions = Arrays.asList(
             Permission.MESSAGE_SEND,
-            Permission.VIEW_CHANNEL
+            Permission.VIEW_CHANNEL,
+            Permission.MESSAGE_HISTORY
     );
 
     private final List<Permission> managerPermissions = Arrays.asList(
@@ -68,10 +69,10 @@ public class TicketManager {
         Main.db.createTicket(user.getId(), user.getName() + "#" + user.getDiscriminator(), channel.getId());
         Main.bot
                 .getLogsChannel()
-                .sendMessage(member.getAsMention() + " created a ticket " + channel.getAsMention() + " " + channel.getJumpUrl())
+                .sendMessage(String.format("%s created a ticket %s (%s), id: %s, %s", member.getAsMention(), channel.getAsMention(), "#" + channel.getName(), channel.getId(), channel.getJumpUrl()))
                 .complete();
         for(Category category : Main.bot.getCategoryManager().getCategories()) {
-            if(category.getChannels().size() >= maxTicketsPerUser) continue;
+            if(category.getChannels().size() >= MAX_CHANNELS_PER_CATEGORY) continue;
             channel.getManager().setParent(category).complete();
             break;
         }
