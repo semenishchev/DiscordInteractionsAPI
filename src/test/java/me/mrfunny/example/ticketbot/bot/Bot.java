@@ -1,7 +1,6 @@
 package me.mrfunny.example.ticketbot.bot;
 
 import me.mrfunny.example.ticketbot.Main;
-import me.mrfunny.example.ticketbot.bot.commands.AdminCommands;
 import me.mrfunny.example.ticketbot.bot.commands.TicketCommand;
 import me.mrfunny.example.ticketbot.bot.permissions.PermissionManager;
 import me.mrfunny.interactionapi.CommandManager;
@@ -37,7 +36,6 @@ public class Bot {
         }
         this.permissionManager = new PermissionManager(this);
         this.categoryManager = new CategoryManager(this);
-        manager.registerCommand(new AdminCommands());
         manager.registerCommand(new TicketCommand());
         this.ticketManager = new TicketManager(this);
         this.logsChannel = guild.getChannelById(TextChannel.class, Main.settings.getString("logs-channel"));

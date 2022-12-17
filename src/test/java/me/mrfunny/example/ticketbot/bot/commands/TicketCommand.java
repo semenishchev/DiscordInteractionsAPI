@@ -3,12 +3,14 @@ package me.mrfunny.example.ticketbot.bot.commands;
 import me.mrfunny.example.ticketbot.Main;
 import me.mrfunny.example.ticketbot.bot.TicketManager;
 import me.mrfunny.example.ticketbot.bot.permissions.Permissions;
+import me.mrfunny.example.ticketbot.util.EmbedUtil;
 import me.mrfunny.interactionapi.annotation.Parameter;
 import me.mrfunny.interactionapi.annotation.Subcommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommand;
 import me.mrfunny.interactionapi.commands.slash.SlashCommandInvocation;
 import me.mrfunny.interactionapi.commands.slash.SubcommandGroup;
 import me.mrfunny.interactionapi.response.MessageContent;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -102,9 +104,23 @@ public class TicketCommand implements SlashCommand {
             return "Admin commands";
         }
 
-        @Subcommand
-        public void test(SlashCommandInvocation invocation) {
-            invocation.send(new MessageContent("Hello from subcommand group"));
+        @Subcommand(name = "sendopenticketembed")
+        public void sendOpenTicketEmbed(SlashCommandInvocation invocation) {
+            Member member = invocation.getMember();
+            invocation.ephemeral(true);
+            if(!member.hasPermission(Permission.ADMINISTRATOR)) {
+                invocation.send(new MessageContent("You don't have permissions to execute this command"));
+                return;
+            }
+
+            new MessageContent(EmbedUtil.fromData(Main.messages
+                    .getObject("outside-ticket")
+                    .getObject("create-ticket-embed")
+                    .getObject("the")))
+                    .addActionRow(Main.bot.getComponents().OPEN_TICKET_BUTTON)
+                    .send(invocation.getChannel());
+
+            invocation.send(new MessageContent("Done!"));
         }
     }
 }
