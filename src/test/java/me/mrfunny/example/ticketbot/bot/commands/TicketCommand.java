@@ -50,12 +50,14 @@ public class TicketCommand implements SlashCommand {
             invocation.ephemeral(true).send(Main.bot.getComponents().NO_PERMISSIONS);
             return;
         }
-        invocation.defer(false);
+
         String ticketId = ticket.getId();
         if(Main.db.isJoinedTo(rawUser.getId(), ticketId)) {
-            invocation.send(new MessageContent("User is already in the ticket"));
+            invocation.ephemeral(true).send(new MessageContent("User is already in the ticket"));
             return;
         }
+
+        invocation.defer(false);
         invocation.send(Main.bot.getTicketManager().addToTicket(ticket, user));
     }
 
@@ -66,24 +68,26 @@ public class TicketCommand implements SlashCommand {
     ) {
         Member user = Main.bot.getGuild().getMember(rawUser);
         if(user == null) {
-            invocation.send(new MessageContent("User not found"));
+            invocation.ephemeral(true).send(new MessageContent("User not found"));
             return;
         }
 
         TextChannel ticket = (TextChannel) invocation.getChannel();
         if(
-                !Main.bot.getPermissionManager().hasPermission(invocation.getMember(), Permissions.MANAGE_USERS) &&
-                !Main.bot.getPermissionManager().hasPermission(invocation.getMember(), Permissions.MANAGE_TICKETS)
+            !Main.bot.getPermissionManager().hasPermission(invocation.getMember(), Permissions.MANAGE_USERS) &&
+            !Main.bot.getPermissionManager().hasPermission(invocation.getMember(), Permissions.MANAGE_TICKETS)
         ) {
             invocation.ephemeral(true).send(Main.bot.getComponents().NO_PERMISSIONS);
             return;
         }
-        invocation.defer(false);
+
         String ticketId = ticket.getId();
         if(!Main.db.isJoinedTo(rawUser.getId(), ticketId)) {
-            invocation.send(new MessageContent("User isn't in the ticket"));
+            invocation.ephemeral(true).send(new MessageContent("User isn't in the ticket"));
             return;
         }
+
+        invocation.defer(false);
         invocation.send(Main.bot.getTicketManager().removeFromTicket(ticket, user));
     }
 
