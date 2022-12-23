@@ -1,4 +1,4 @@
-package me.mrfunny.interactionapi.response;
+package me.mrfunny.interactionapi.modals;
 
 import me.mrfunny.interactionapi.common.SimpleExecutable;
 import me.mrfunny.interactionapi.internal.cache.ResponseCache;

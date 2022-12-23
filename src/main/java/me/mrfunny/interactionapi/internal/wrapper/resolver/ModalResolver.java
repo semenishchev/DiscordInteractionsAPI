@@ -1,7 +1,7 @@
 package me.mrfunny.interactionapi.internal.wrapper.resolver;
 
 import me.mrfunny.interactionapi.internal.wrapper.resolver.interfaces.ComplexResolver;
-import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package me.mrfunny.interactionapi.internal;
 
 import me.mrfunny.interactionapi.internal.wrapper.util.ResponseMapper;
 import me.mrfunny.interactionapi.response.MessageContent;
-import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.modals.Modal;
 import me.mrfunny.interactionapi.response.interfaces.InteractionResponse;
 import me.mrfunny.interactionapi.util.ConsumerUtil;
 import net.dv8tion.jda.api.entities.Guild;
@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;

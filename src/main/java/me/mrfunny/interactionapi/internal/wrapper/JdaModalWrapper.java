@@ -3,13 +3,12 @@ package me.mrfunny.interactionapi.internal.wrapper;
 import me.mrfunny.interactionapi.annotation.ModalFieldData;
 import me.mrfunny.interactionapi.modals.ModalField;
 import me.mrfunny.interactionapi.modals.ModalFieldImpl;
-import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.modals.Modal;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;

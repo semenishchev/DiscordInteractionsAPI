@@ -5,7 +5,7 @@ import me.mrfunny.interactionapi.annotation.ModalFieldData;
 import me.mrfunny.interactionapi.internal.InteractionInvocation;
 import me.mrfunny.interactionapi.modals.ModalField;
 import me.mrfunny.interactionapi.response.MessageContent;
-import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.modals.Modal;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

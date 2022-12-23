@@ -1,16 +1,16 @@
 package me.mrfunny.interactionapi.menus;
 
-import me.mrfunny.interactionapi.internal.cache.ResponseCache;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.utils.EntityString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class SelectMenu<T> implements net.dv8tion.jda.api.interactions.components.selections.SelectMenu, CachedResponse {
+public abstract class SelectMenu<T> implements
+        net.dv8tion.jda.api.interactions.components.selections.SelectMenu,
+        CachedResponse {
     protected String id, placeholder;
     protected int minValues, maxValues;
     protected boolean disabled;

@@ -3,7 +3,7 @@ package me.mrfunny.interactionapi.internal.cache;
 import me.mrfunny.interactionapi.CommandManager;
 import me.mrfunny.interactionapi.buttons.Button;
 import me.mrfunny.interactionapi.menus.SelectMenu;
-import me.mrfunny.interactionapi.response.Modal;
+import me.mrfunny.interactionapi.modals.Modal;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 
