@@ -148,14 +148,17 @@ public class TicketManager {
             invocation.ephemeral(true).send(Main.bot.getComponents().NO_PERMISSIONS);
             return;
         }
-        invocation.defer(false);
-        invocation.send(new MessageContent("Ticket closed!"));
+
         try {
             Main.bot.getTicketManager().closeTicket(ticket);
+            invocation.defer(false);
+            invocation.send(new MessageContent("Ticket closed!"));
+        } catch (NotATicketException e) {
+            invocation.ephemeral(true).send(new MessageContent("Not in the valid ticket channel"));
         } catch (IOException e) {
             invocation.edit(new MessageContent("Failed to close"));
             e.printStackTrace();
-        }
+        } catch (Exception ignored){}
     }
 
     public int getMaxTicketsPerUser() {

@@ -92,7 +92,8 @@ public class TicketCommand implements SlashCommand {
     }
 
     @Subcommand
-    public void close(SlashCommandInvocation invocation) {
+    public void close(SlashCommandInvocation invocation, ClosureReason reason) {
+        System.out.println(reason);
         TicketManager.handleTicketClosure(invocation);
     }
 
@@ -109,7 +110,13 @@ public class TicketCommand implements SlashCommand {
         }
 
         @Subcommand(name = "sendopenticketembed")
-        public void sendOpenTicketEmbed(SlashCommandInvocation invocation) {
+        public void sendOpenTicketEmbed(
+                SlashCommandInvocation invocation,
+                @Parameter(
+                        name = "result",
+                        stringChoices = {"Done!", "Sent ticket embed"}
+                ) String result
+        ) {
             Member member = invocation.getMember();
             invocation.ephemeral(true);
             if(!member.hasPermission(Permission.ADMINISTRATOR)) {
@@ -124,7 +131,7 @@ public class TicketCommand implements SlashCommand {
                     .addActionRow(Main.bot.getComponents().OPEN_TICKET_BUTTON)
                     .send(invocation.getChannel());
 
-            invocation.send(new MessageContent("Done!"));
+            invocation.send(new MessageContent(result == null ? "Done!" : result));
         }
     }
 }

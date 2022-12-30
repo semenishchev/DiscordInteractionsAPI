@@ -54,12 +54,35 @@ public class JdaCommandWrapper {
         CommandParameters commandParameters = executor.getParameters();
         ArrayList<OptionData> result = new ArrayList<>(commandParameters.size());
         for(CommandParameter parameter : commandParameters) {
-            result.add(new OptionData(
+            OptionData data = new OptionData(
                     ParameterMapper.mapParameterToType(parameter.getJavaParameter().getType()),
                     parameter.getName(),
                     parameter.getDescription(),
                     parameter.isRequired()
-            ));
+            );
+            result.add(data);
+
+            // processing other things
+            HashMap<String, Object> choices = parameter.getPredefinedChoices();
+            if(choices.isEmpty()) continue;
+            Class<?> choiceType = parameter.getPredefinedChoicesType();
+            boolean primitive = false;
+            if(choiceType.isPrimitive()) {
+                if(!choiceType.equals(long.class) && !choiceType.equals(int.class)) {
+                    throw new IllegalArgumentException("Primitive type " + choiceType.getName() + " cannot have predefined values\n" +
+                            "Declaration: " + executor.getSource().getCommandBlueprint().getClass() + "." + executor.getName() + "()");
+                }
+                primitive = true;
+            }
+
+            for(Map.Entry<String, Object> choice : choices.entrySet()) {
+                if(primitive) {
+                    data.addChoice(choice.getKey(), (long) choice.getValue());
+                    continue;
+                }
+
+                data.addChoice(choice.getKey(), choice.getValue().toString());
+            }
         }
         return result;
     }

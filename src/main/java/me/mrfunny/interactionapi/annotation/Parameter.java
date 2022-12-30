@@ -11,4 +11,7 @@ public @interface Parameter {
     String name();
     String description() default "No description provided.";
     boolean required() default false;
+
+    String[] stringChoices() default {};
+    long[] longChoices() default {};
 }

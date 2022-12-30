@@ -82,7 +82,16 @@ public class CommandExecutor {
         for(OptionMapping option : arguments) {
             CommandParameter toInject = parameters.get(option.getName());
             try {
-                result[toInject.getParameterArgumentIndex()] = toInject.map(option);
+                Object injecting = toInject.map(option);
+                if(toInject.usesEnum()) {
+                    for(Object rawConstant : toInject.getPredefinedChoicesType().getEnumConstants()) {
+                        Enum<?> constant = (Enum<?>) rawConstant;
+                        if(!constant.name().equals(injecting.toString())) continue;
+                        injecting = constant;
+                        break;
+                    }
+                }
+                result[toInject.getParameterArgumentIndex()] = injecting;
             } catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

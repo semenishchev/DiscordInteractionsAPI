@@ -1,6 +1,7 @@
 package me.mrfunny.example.ticketbot;
 
 import me.mrfunny.example.ticketbot.bot.Bot;
+import me.mrfunny.example.ticketbot.bot.commands.ClosureReason;
 import me.mrfunny.example.ticketbot.bot.permissions.PermissionManager;
 import me.mrfunny.example.ticketbot.db.MongoDbStorage;
 import me.mrfunny.example.ticketbot.db.Storage;
@@ -29,6 +30,7 @@ public class Main {
         settings = config.getObject("settings");
         bot = new Bot(connectionData);
         db = new MongoDbStorage(connectionData);
+        System.out.println(ClosureReason.DONE.getClass().getName());
     }
 
     private static DataObject loadConfig() throws IOException {

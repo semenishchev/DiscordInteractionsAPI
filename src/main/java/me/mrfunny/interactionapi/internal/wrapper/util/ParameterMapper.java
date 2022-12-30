@@ -1,5 +1,6 @@
 package me.mrfunny.interactionapi.internal.wrapper.util;
 
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
@@ -14,6 +15,7 @@ public class ParameterMapper {
     private final static String USER_CLASS_NAME = "net.dv8tion.jda.api.entities.User";
     private final static String ROLE_CLASS_NAME = "net.dv8tion.jda.api.entities.Role";
     private final static String CHANNEL_CLASS_NAME = "net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion";
+
     public static Method mapParameter(Class<?> parameterType) throws Exception {
         Class<OptionMapping> optionMappingClass = OptionMapping.class;
         return switch (parameterType.getName()) {
@@ -33,6 +35,9 @@ public class ParameterMapper {
     }
 
     public static OptionType mapParameterToType(Class<?> parameterType) {
+        if(parameterType.isEnum()) {
+            return OptionType.STRING;
+        }
         return switch (parameterType.getName()) {
             case "byte", "short", "float" -> throw new IllegalArgumentException("byte, short and floats are not supported by JDA");
             case "long", "int" -> OptionType.INTEGER;
