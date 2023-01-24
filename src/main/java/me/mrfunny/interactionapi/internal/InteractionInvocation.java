@@ -149,10 +149,6 @@ public class InteractionInvocation {
             }
             return this;
         }
-        else {
-            // TODO: handle dialogue
-        }
-
 
         return this;
     }

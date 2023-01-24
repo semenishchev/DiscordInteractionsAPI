@@ -88,4 +88,8 @@ public class ResponseCache {
         }
         return null;
     }
+
+    public static boolean removeCached(CachedResponse response) {
+        return responses.remove(response);
+    }
 }

@@ -68,7 +68,7 @@ public class CommandExecutor {
             }
             callingMethod.invoke(source, injectInvokeArgs(event, event.getOptions()));
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
