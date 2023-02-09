@@ -34,6 +34,7 @@ import java.util.HashMap;
 
 class CommandManagerImpl implements CommandManager {
     private final JDA jda;
+    private boolean debug;
 
     public CommandManagerImpl(JDA jda) {
         this.jda = jda;
@@ -74,6 +75,16 @@ class CommandManagerImpl implements CommandManager {
     }
 
     @Override
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    @Override
+    public boolean isDebug() {
+        return debug;
+    }
+
+    @Override
     public boolean processCommandInteraction(SlashCommandInteractionEvent event) {
         if(event == null) return false;
         RegisteredCommand command = slashCommands.get(event.getName());
@@ -90,10 +101,10 @@ class CommandManagerImpl implements CommandManager {
             }
 
             if(subcommand == null) return false;
-            subcommand.execute(event);
+            subcommand.execute(this, event);
             return true;
         }
-        command.getMainExecutor().execute(event);
+        command.getMainExecutor().execute(this, event);
         return true;
     }
 
@@ -143,6 +154,12 @@ class CommandManagerImpl implements CommandManager {
             cached = ResponseCache.getPermanent(event.getComponentId(), Button.class);
         }
         if(cached == null) {
+            if(debug) {
+                System.out.println("Interaction not found: " + event.getComponentId());
+                System.out.println(ResponseCache.getResponses().stream().map(response -> response.getId() + " " + response.getCreatedFor().getName()).toList());
+                System.out.println(ResponseCache.getPermanentResponses().stream().map(response -> response.getId() + ": " + response.getClass().getName()).toList());
+            }
+
             return false;
         }
         if(event.getMember() != null) {

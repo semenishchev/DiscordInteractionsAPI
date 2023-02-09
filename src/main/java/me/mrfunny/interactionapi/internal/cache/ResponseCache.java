@@ -6,10 +6,14 @@ import me.mrfunny.interactionapi.menus.SelectMenu;
 import me.mrfunny.interactionapi.modals.Modal;
 import me.mrfunny.interactionapi.response.interfaces.CachedResponse;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 
@@ -52,11 +56,15 @@ public class ResponseCache {
     }
 
     public static void addCached(CachedResponse cachedResponse) {
-        if(cachedResponse.deleteAfter() < 1) {
-            throw new RuntimeException("Cached " + cachedResponse.getClass().getSimpleName() + " cannot have delete time less than 0");
+        if(cachedResponse.isPermanent() && cachedResponse.deleteAfter() < 1) {
+            throw new RuntimeException("Cannot cache a permanent response!");
+        }
+        int deleteTime = cachedResponse.deleteAfter();
+        if(deleteTime < 1) {
+            deleteTime = DEFAULT_DELETE_AFTER;
         }
         responses.add(cachedResponse);
-        CommandManager.getAsyncExecutor().schedule(() -> responses.remove(cachedResponse), cachedResponse.deleteAfter(), TimeUnit.SECONDS);
+        CommandManager.getAsyncExecutor().schedule(() -> responses.remove(cachedResponse), deleteTime, TimeUnit.SECONDS);
     }
 
     public static void addPermanent(CachedResponse response) {
@@ -68,7 +76,7 @@ public class ResponseCache {
         if(searcher == null) return null;
         for(CachedResponse response : responses) {
             if(response.getCreatedFor() == null) continue;
-            if(!event.getInteraction().getId().equals(response.getId())) continue;
+            if(!Objects.equals(provideComponentApi(event.getInteraction()), response.getId())) continue;
             if(!searcher.test(event, response)) continue;
             return (T) response;
         }
@@ -89,7 +97,26 @@ public class ResponseCache {
         return null;
     }
 
+    private static String provideComponentApi(Interaction interaction) {
+        if(interaction instanceof ComponentInteraction c) return c.getComponentId();
+        return null;
+    }
+
     public static boolean removeCached(CachedResponse response) {
         return responses.remove(response);
+    }
+
+    /*
+    This method never should be called outside the API, unless really needed. Modification can cause bugs
+     */
+    public static ArrayList<CachedResponse> getResponses() {
+        return responses;
+    }
+
+    /*
+    This method never should be called outside the API, unless really needed. Modification can cause bugs
+     */
+    public static HashSet<CachedResponse> getPermanentResponses() {
+        return permanentResponses;
     }
 }

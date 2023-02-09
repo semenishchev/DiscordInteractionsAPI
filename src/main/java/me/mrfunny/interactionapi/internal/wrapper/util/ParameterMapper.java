@@ -20,10 +20,10 @@ public class ParameterMapper {
         Class<OptionMapping> optionMappingClass = OptionMapping.class;
         return switch (parameterType.getName()) {
             case "byte", "short", "float" -> throw new IllegalArgumentException("byte, short and floats are not supported by JDA");
-            case "long" -> optionMappingClass.getMethod("getAsLong");
-            case "int" -> optionMappingClass.getMethod("getAsInt");
-            case "double" -> optionMappingClass.getMethod("getAsDouble");
-            case "boolean" -> optionMappingClass.getMethod("getAsBoolean");
+            case "long", "java.lang.Long" -> optionMappingClass.getMethod("getAsLong");
+            case "int", "java.lang.Integer" -> optionMappingClass.getMethod("getAsInt");
+            case "double", "java.lang.Double" -> optionMappingClass.getMethod("getAsDouble");
+            case "boolean", "java.lang.Boolean" -> optionMappingClass.getMethod("getAsBoolean");
             case ATTACHMENT_CLASS_NAME -> optionMappingClass.getMethod("getAsAttachment");
             case MENTIONABLE_CLASS_NAME -> optionMappingClass.getMethod("getAsMentionable");
             case MEMBER_CLASS_NAME -> optionMappingClass.getMethod("getAsMember");
@@ -40,9 +40,10 @@ public class ParameterMapper {
         }
         return switch (parameterType.getName()) {
             case "byte", "short", "float" -> throw new IllegalArgumentException("byte, short and floats are not supported by JDA");
-            case "long", "int" -> OptionType.INTEGER;
-            case "double" -> OptionType.NUMBER;
-            case "boolean" -> OptionType.BOOLEAN;
+            case "long", "int", "java.lang.Integer",
+                    "java.lang.Long" -> OptionType.INTEGER;
+            case "double", "java.lang.Double" -> OptionType.NUMBER;
+            case "boolean", "java.lang.Boolean" -> OptionType.BOOLEAN;
             case STRING_CLASS_NAME -> OptionType.STRING;
             case ATTACHMENT_CLASS_NAME -> OptionType.ATTACHMENT;
             case MENTIONABLE_CLASS_NAME -> OptionType.MENTIONABLE;
@@ -54,10 +55,21 @@ public class ParameterMapper {
     }
 
     public static Object mapTypeToNull(Class<?> parameterType) {
+
         return switch (parameterType.getName()) {
-            case "long", "int" -> 0;
-            case "double" -> 0.0;
-            case "boolean" -> false;
+            case "long",
+                    "short",
+                    "byte",
+                    "int",
+                    "java.lang.Integer",
+                    "java.lang.Long",
+                    "java.lang.Short",
+                    "java.lang.Byte",
+                    "java.lang.Number" -> 0;
+            case "double", "java.lang.Double" -> 0.0;
+            case "float", "java.lang.Float" -> 0.0f;
+            case "boolean", "java.lang.Boolean" -> false;
+
             default -> null;
         };
     }

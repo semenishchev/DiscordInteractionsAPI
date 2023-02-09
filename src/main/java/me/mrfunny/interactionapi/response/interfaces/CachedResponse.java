@@ -18,6 +18,10 @@ public interface CachedResponse extends InteractionResponse {
     User getCreatedFor();
     String getId();
 
+    default void cache() {
+        ResponseCache.addCached(this);
+    }
+
     default boolean close() {
         return ResponseCache.removeCached(this);
     }

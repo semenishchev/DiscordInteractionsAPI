@@ -15,6 +15,7 @@ import net.dv8tion.jda.internal.interactions.InteractionHookImpl;
 
 public class ResponseMapper {
     public static MessageEditRequest<?> map(MessageContent messageContent, MessageEditRequest<?> toApply) {
+        toApply.setReplace(true);
         if(messageContent.getContent() != null) {
             toApply.setContent(messageContent.getContent());
         }
@@ -50,7 +51,7 @@ public class ResponseMapper {
     public static WebhookMessageEditAction<Message> mapEdit(MessageContent messageContent, InteractionHook responseActionRaw, String id) {
         InteractionHookImpl interactionHook = (InteractionHookImpl) responseActionRaw;
         WebhookMessageEditAction<Message> result = interactionHook.editRequest(id);
-
+        result.setReplace(true);
         if(messageContent.getContent() != null) {
             result.setContent(messageContent.getContent());
         }

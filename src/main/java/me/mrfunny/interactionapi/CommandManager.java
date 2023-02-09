@@ -16,6 +16,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public interface CommandManager {
     void registerCommand(Command commandInstance);
+    void setDebug(boolean debug);
+    boolean isDebug();
     boolean processCommandInteraction(SlashCommandInteractionEvent event);
     boolean processContextInteraction(UserContextInteractionEvent event);
     boolean processContextInteraction(MessageContextInteractionEvent event);

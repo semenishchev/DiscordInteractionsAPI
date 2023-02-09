@@ -9,7 +9,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommandExecutor {
     private final String name;
@@ -49,15 +52,15 @@ public class CommandExecutor {
         return description;
     }
 
-    public void execute(SlashCommandInteractionEvent event) {
+    public void execute(CommandManager manager, SlashCommandInteractionEvent event) {
         if(!sync) {
-            execute0(event);
+            execute0(manager, event);
             return;
         }
-        CommandManager.getAsyncExecutor().execute(() -> execute0(event));
+        CommandManager.getAsyncExecutor().execute(() -> execute0(manager, event));
     }
 
-    private void execute0(SlashCommandInteractionEvent event) {
+    private void execute0(CommandManager manager, SlashCommandInteractionEvent event) {
         try {
             callingMethod.setAccessible(true);
             Object source;
@@ -66,8 +69,9 @@ public class CommandExecutor {
             } else {
                 source = this.source.getCommandBlueprint();
             }
-            callingMethod.invoke(source, injectInvokeArgs(event, event.getOptions()));
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            callingMethod.invoke(source, injectInvokeArgs(manager, event, event.getOptions()));
+        } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -76,7 +80,7 @@ public class CommandExecutor {
         return parameters;
     }
 
-    public Object[] injectInvokeArgs(SlashCommandInteractionEvent context, List<OptionMapping> arguments) {
+    public Object[] injectInvokeArgs(CommandManager manager, SlashCommandInteractionEvent context, List<OptionMapping> arguments) {
         Object[] result = new Object[parameters.size() + 1];
         int filled = 0;
         for(OptionMapping option : arguments) {
@@ -91,21 +95,33 @@ public class CommandExecutor {
                         break;
                     }
                 }
+//                objectToIndexMap.put(injecting, toInject.getParameterArgumentIndex());
                 result[toInject.getParameterArgumentIndex()] = injecting;
+                filled++;
             } catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            filled++;
         }
+
         if(filled != (result.length - 1)) {
-            for (int i = 0; i < result.length - 1; i++) {
+            for(CommandParameter javaParameter : parameters) {
+                int i = javaParameter.getParameterArgumentIndex();
+                if(i == contextArgumentIndex) continue;
                 Object parameter = result[i];
                 if(parameter instanceof SlashCommandInvocation) continue;
                 if(parameter != null) continue;
-                result[i] = ParameterMapper.mapTypeToNull(parameters.get(i).getJavaParameter().getType());
+                Class<?> type = javaParameter.getJavaParameter().getType();
+                result[i] = ParameterMapper.mapTypeToNull(type);
+                if(manager.isDebug()) {
+                    System.out.println("Mapped null parameter " + javaParameter.getName() + " into " + result[i] +" with target type of " + type.getName());
+                }
             }
         }
+
         result[contextArgumentIndex] = new SlashCommandInvocation(context);
+        if(manager.isDebug()) {
+            System.out.println("[DEBUG] Processing interaction arguments: " + Arrays.toString(result));
+        }
         return result;
     }
 }
